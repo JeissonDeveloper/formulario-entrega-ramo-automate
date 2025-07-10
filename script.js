@@ -69,19 +69,20 @@ formulario.addEventListener("submit", async (e) => {
 
   const firmaDataURL = canvas.toDataURL("image/png");
 
-  const data = {
-    nombre: formulario.nombre.value,
-    apellido: formulario.apellido.value,
-    cedula: formulario.cedula.value,
-    codigo_sap: formulario.codigo_sap.value,
-    telefono: formulario.telefono.value,
-    estado_equipo: formulario.estado_equipo.value,
-    accesorios: formulario.accesorios.value,
-    estado_bateria: formulario.estado_bateria.value,
-    observaciones: formulario.observaciones.value,
-    serial: formulario.serial.value,
-    firma: firmaDataURL
-  };
+ const data = {
+  nombre: formulario.nombre.value,
+  apellido: formulario.apellido.value,
+  cedula: formulario.cedula.value,
+  codigo_sap: formulario.codigo_sap.value,
+  telefono: formulario.telefono.value,
+  estado_equipo: formulario.estado_equipo.value,
+  accesorios: formulario.accesorios.value,
+  estado_bateria: formulario.estado_bateria.value,
+  observaciones: formulario.observaciones.value,
+  serial: formulario.serial.value,
+  firma: firmaDataURL
+};
+
 
   try {
     const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/94482b3719cd4885bc375babcd4bce2c/triggers/manual/paths/invoke/?api-version=1&tenantId=tId&environmentName=Default-03db959e-f515-4356-9100-cc4a9dcf258b&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fkBC4BmU3ht00DDw4xuImox05onAW0vptGdssjqvD6o", {
