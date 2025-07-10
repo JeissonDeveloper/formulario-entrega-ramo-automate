@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulario Entrega RAMO</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header>
+    <img src="logo-ramo.png" alt="Logo RAMO" />
+  </header>
+
+  <h2>Formulario de Entrega RAMO - TC27</h2>
+
+  <form id="formulario">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" required />
+    
+    <label>Apellido:</label>
+    <input type="text" name="apellido" required />
+
+    <label>Cédula:</label>
+    <input type="text" name="cedula" required />
+
+    <label>Código SAP:</label>
+    <input type="text" name="codigo_sap" required />
+
+    <label>Teléfono del equipo:</label>
+    <input type="text" name="telefono" required />
+
+    <label>Estado del equipo:</label>
+    <input type="text" name="estado_equipo" required />
+
+    <label>Accesorios (cable, estuche, cabezal):</label>
+    <input type="text" name="accesorios" required />
+
+    <label>Estado batería:</label>
+    <input type="text" name="estado_bateria" required />
+
+    <label>Observaciones / Apps instaladas:</label>
+    <textarea name="observaciones" rows="3"></textarea>
+
+    <label>Serial del equipo:</label>
+    <input type="text" id="serial" name="serial" readonly />
+
+    <label>Firma digital (use el dedo o mouse):</label>
+    <canvas id="canvas"></canvas>
+    <button type="button" onclick="limpiarFirma()">Limpiar firma</button>
+
+    <button type="submit">Enviar</button>
+    <p id="estado"></p>
+  </form>
+
+  <script src="script.js"></script>
+</body>
+</html>
