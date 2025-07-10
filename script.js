@@ -3,6 +3,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let dibujando = false;
 
+// Ajustar tamaño del canvas
 function ajustarCanvas() {
   canvas.width = canvas.offsetWidth;
   canvas.height = 150;
