@@ -63,6 +63,31 @@ function obtenerSerialDesdeURL() {
   }
 }
 
+// Guardar en localStorage al escribir
+formulario.addEventListener("input", () => {
+  const datos = {};
+  [...formulario.elements].forEach(el => {
+    if (el.name && el.type !== "submit" && el.type !== "button" && el.type !== "checkbox") {
+      datos[el.name] = el.value;
+    }
+  });
+  localStorage.setItem("datos_formulario_ramo", JSON.stringify(datos));
+});
+
+// Cargar desde localStorage al iniciar
+window.addEventListener("DOMContentLoaded", () => {
+  const datosGuardados = localStorage.getItem("datos_formulario_ramo");
+  if (datosGuardados) {
+    const datos = JSON.parse(datosGuardados);
+    Object.keys(datos).forEach(campo => {
+      const input = formulario.elements[campo];
+      if (input) {
+        input.value = datos[campo];
+      }
+    });
+  }
+});
+
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
   const estado = document.getElementById("estado");
@@ -97,6 +122,7 @@ formulario.addEventListener("submit", async (e) => {
       estado.innerText = "✅ Datos enviados correctamente.";
       formulario.reset();
       limpiarFirma();
+      localStorage.removeItem("datos_formulario_ramo");
     } else {
       estado.innerText = "❌ Error al enviar: " + response.status;
     }
