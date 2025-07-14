@@ -118,6 +118,7 @@ formulario.addEventListener("submit", async (e) => {
   estado.innerText = "Enviando datos...";
 
   const firmaDataURL = canvas.toDataURL("image/png");
+  const firmaBase64 = firmaDataURL.split(",")[1]; // Separa solo la parte base64
 
   const data = {
     nombre: formulario.nombre.value,
@@ -130,7 +131,7 @@ formulario.addEventListener("submit", async (e) => {
     estado_bateria: formulario.estado_bateria.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
-    firma: firmaDataURL
+    firma: firmaBase64
   };
 
   try {
@@ -156,4 +157,5 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
 
