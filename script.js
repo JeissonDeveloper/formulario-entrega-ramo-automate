@@ -3,14 +3,12 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let dibujando = false;
 
-// Ajustar tamaño del canvas
 function ajustarCanvas() {
   canvas.width = canvas.offsetWidth;
   canvas.height = 150;
 }
 ajustarCanvas();
 
-// Eventos para mouse
 canvas.addEventListener("mousedown", () => dibujando = true);
 canvas.addEventListener("mouseup", () => {
   dibujando = false;
@@ -19,7 +17,6 @@ canvas.addEventListener("mouseup", () => {
 canvas.addEventListener("mouseout", () => dibujando = false);
 canvas.addEventListener("mousemove", dibujar);
 
-// Eventos touch para Android
 canvas.addEventListener("touchstart", (e) => {
   dibujando = true;
   const touch = e.touches[0];
@@ -63,30 +60,57 @@ function obtenerSerialDesdeURL() {
   }
 }
 
-// Guardar en localStorage al escribir
-formulario.addEventListener("input", () => {
-  const datos = {};
-  [...formulario.elements].forEach(el => {
-    if (el.name && el.type !== "submit" && el.type !== "button" && el.type !== "checkbox") {
-      datos[el.name] = el.value;
+function guardarEnLocalStorage() {
+  const campos = formulario.elements;
+  for (let i = 0; i < campos.length; i++) {
+    if (campos[i].name) {
+      localStorage.setItem("form_" + campos[i].name, campos[i].value);
     }
-  });
-  localStorage.setItem("datos_formulario_ramo", JSON.stringify(datos));
+  }
+}
+
+function cargarDesdeLocalStorage() {
+  const campos = formulario.elements;
+  for (let i = 0; i < campos.length; i++) {
+    if (campos[i].name) {
+      const valor = localStorage.getItem("form_" + campos[i].name);
+      if (valor) campos[i].value = valor;
+    }
+  }
+}
+
+function limpiarLocalStorage() {
+  const campos = formulario.elements;
+  for (let i = 0; i < campos.length; i++) {
+    if (campos[i].name) {
+      localStorage.removeItem("form_" + campos[i].name);
+    }
+  }
+}
+
+// Validaciones de solo letras o números
+formulario.nombre.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
 
-// Cargar desde localStorage al iniciar
-window.addEventListener("DOMContentLoaded", () => {
-  const datosGuardados = localStorage.getItem("datos_formulario_ramo");
-  if (datosGuardados) {
-    const datos = JSON.parse(datosGuardados);
-    Object.keys(datos).forEach(campo => {
-      const input = formulario.elements[campo];
-      if (input) {
-        input.value = datos[campo];
-      }
-    });
-  }
+formulario.apellido.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
+
+formulario.cedula.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+});
+
+formulario.codigo_sap.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+});
+
+formulario.telefono.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+});
+
+formulario.addEventListener("input", guardarEnLocalStorage);
+cargarDesdeLocalStorage();
 
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -122,7 +146,7 @@ formulario.addEventListener("submit", async (e) => {
       estado.innerText = "✅ Datos enviados correctamente.";
       formulario.reset();
       limpiarFirma();
-      localStorage.removeItem("datos_formulario_ramo");
+      limpiarLocalStorage();
     } else {
       estado.innerText = "❌ Error al enviar: " + response.status;
     }
@@ -132,3 +156,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
