@@ -120,8 +120,8 @@ formulario.addEventListener("submit", async (e) => {
   const firmaBase64 = firmaDataURL.split(",")[1];
 
   const data = {
-    nombre: formulario.nombre.value,
-    apellido: formulario.apellido.value,
+    nombres: formulario.nombres.value,
+    apellidos: formulario.apellidos.value,
     cedula: formulario.cedula.value,
     fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
