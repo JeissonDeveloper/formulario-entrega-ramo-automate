@@ -117,7 +117,7 @@ formulario.addEventListener("submit", async (e) => {
   ).map(cb => cb.value).join(", ");
 
   const firmaDataURL = canvas.toDataURL("image/png");
-  const firmaBase64 = firmaDataURL.split(",")[1];
+  const firmaBase64 = firmaDataURL; // Incluye todo el encabezado
 
   const data = {
     nombre: formulario.nombre.value,
