@@ -117,7 +117,7 @@ formulario.addEventListener("submit", async (e) => {
   const estado = document.getElementById("estado");
   estado.innerText = "Enviando datos...";
 
-  const firmaDataURL = canvas.toDataURL("image/jpeg");
+  const firmaDataURL = canvas.toDataURL("image/png");
   const firmaBase64 = firmaDataURL.split(",")[1]; // Separa solo la parte base64
 
   const data = {
