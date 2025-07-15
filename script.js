@@ -116,7 +116,7 @@ formulario.addEventListener("submit", async (e) => {
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  const firmaDataURL = canvas.toDataURL("image/png");
+  const firmaDataURL = canvas.toDataURL("image/jpeg", 0.95); // calidad alta
   const firmaBase64 = firmaDataURL; // Incluye todo el encabezado
 
   const data = {
