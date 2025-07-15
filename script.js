@@ -116,8 +116,9 @@ formulario.addEventListener("submit", async (e) => {
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  const firmaDataURL = canvas.toDataURL("image/jpeg", 0.95); // calidad alta
-  const firmaBase64 = firmaDataURL; // Incluye todo el encabezado
+  // Capturar firma como imagen JPG en base64 P U R O ✅
+  const firmaDataURL = canvas.toDataURL("image/jpeg", 0.95);
+  const firmaBase64 = firmaDataURL.split(",")[1]; // 👈 Solo el contenido sin encabezado
 
   const data = {
     nombre: formulario.nombre.value,
