@@ -9,24 +9,18 @@ function ajustarCanvas() {
 }
 ajustarCanvas();
 
+// Eventos para firma
 canvas.addEventListener("mousedown", () => dibujando = true);
-canvas.addEventListener("mouseup", () => {
-  dibujando = false;
-  ctx.beginPath();
-});
+canvas.addEventListener("mouseup", () => { dibujando = false; ctx.beginPath(); });
 canvas.addEventListener("mouseout", () => dibujando = false);
 canvas.addEventListener("mousemove", dibujar);
-
 canvas.addEventListener("touchstart", (e) => {
   dibujando = true;
   const touch = e.touches[0];
   const rect = canvas.getBoundingClientRect();
   ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
 });
-canvas.addEventListener("touchend", () => {
-  dibujando = false;
-  ctx.beginPath();
-});
+canvas.addEventListener("touchend", () => { dibujando = false; ctx.beginPath(); });
 canvas.addEventListener("touchmove", (e) => {
   if (!dibujando) return;
   const touch = e.touches[0];
@@ -63,7 +57,7 @@ function obtenerSerialDesdeURL() {
 function guardarEnLocalStorage() {
   const campos = formulario.elements;
   for (let i = 0; i < campos.length; i++) {
-    if (campos[i].name) {
+    if (campos[i].name && campos[i].type !== "checkbox") {
       localStorage.setItem("form_" + campos[i].name, campos[i].value);
     }
   }
@@ -72,7 +66,7 @@ function guardarEnLocalStorage() {
 function cargarDesdeLocalStorage() {
   const campos = formulario.elements;
   for (let i = 0; i < campos.length; i++) {
-    if (campos[i].name) {
+    if (campos[i].name && campos[i].type !== "checkbox") {
       const valor = localStorage.getItem("form_" + campos[i].name);
       if (valor) campos[i].value = valor;
     }
@@ -88,7 +82,7 @@ function limpiarLocalStorage() {
   }
 }
 
-// Validaciones de solo letras o números
+// Validaciones de campos
 formulario.nombre.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
@@ -117,18 +111,25 @@ formulario.addEventListener("submit", async (e) => {
   const estado = document.getElementById("estado");
   estado.innerText = "Enviando datos...";
 
+  // Obtener accesorios seleccionados (checkboxes)
+  const accesoriosSeleccionados = Array.from(
+    formulario.querySelectorAll("input[name='accesorios']:checked")
+  ).map(cb => cb.value).join(", ");
+
   const firmaDataURL = canvas.toDataURL("image/png");
-  const firmaBase64 = firmaDataURL.split(",")[1]; // Separa solo la parte base64
+  const firmaBase64 = firmaDataURL.split(",")[1];
 
   const data = {
     nombre: formulario.nombre.value,
     apellido: formulario.apellido.value,
     cedula: formulario.cedula.value,
+    fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
     telefono: formulario.telefono.value,
     estado_equipo: formulario.estado_equipo.value,
-    accesorios: formulario.accesorios.value,
+    accesorios: accesoriosSeleccionados,
     estado_bateria: formulario.estado_bateria.value,
+    operacion: formulario.operacion.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
     firma: firmaBase64
