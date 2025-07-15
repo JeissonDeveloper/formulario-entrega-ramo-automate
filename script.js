@@ -157,5 +157,3 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
-
-
