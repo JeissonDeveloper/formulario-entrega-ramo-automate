@@ -14,24 +14,26 @@
   <div style="background-color: #f8f8f8; padding: 15px; margin-top: 10px; border: 1px solid #ccc; font-size: 14px;">
     <strong>Condiciones de uso:</strong><br/>
     Los elementos son de uso exclusivo de la Organización Ramo para la ejecución de sus actividades Comerciales.  
-    El anterior equipo y los accesorios no podrán ser utilizados para otras labores distintas a las establecidas para la venta, ni manipulados por terceras personas, por lo tanto cualquier daño o pérdida, por negligencia, mal manejo, y/o descuido del funcionario, lo harán responsable del costo estipulado de dichos elementos.  
-    En caso de presentarse alguna de las anteriores situaciones, la empresa efectuará las investigaciones a que haya lugar.  
-    En  caso de alguna novedad por uso de cualquiera de los elementos asignados, se deberá informar al Jefe inmediato para hacer el trámite de reposición y/o arreglo respectivo.  
-    Si el funcionario se retira de la empresa, deberá entregar los elementos, en las mismas condiciones que le fueron asignados.  
-    Por favor mantenerlo en buen estado, usarlo con estuche para evitar pérdida y daños físicos, igualmente hacer la carga con su cargador y cable original.
+    El anterior equipo y los accesorios no podrán ser utilizados para otras labores distintas a las establecidas para la venta, ni manipulados por terceras personas...
   </div>
 
   <h2>Formulario de Entrega RAMO - TC27</h2>
 
   <form id="formulario">
-    <label>Nombre:</label>
+    <label>Nombres:</label>
     <input type="text" name="nombre" required />
-    
-    <label>Apellido:</label>
+
+    <label>Apellidos:</label>
     <input type="text" name="apellido" required />
 
     <label>Cédula:</label>
     <input type="text" name="cedula" required />
+
+    <label>Fecha de expedición de la cédula:</label>
+    <input type="date" name="fecha_expedicion" required />
+
+    <label>Fecha actual:</label>
+    <input type="text" name="fecha" id="fecha" readonly />
 
     <label>Código SAP:</label>
     <input type="text" name="codigo_sap" required />
@@ -40,15 +42,31 @@
     <input type="text" name="telefono" required />
 
     <label>Estado del equipo:</label>
-    <input type="text" name="estado_equipo" required />
+    <select name="estado_equipo" required>
+      <option value="">Seleccione...</option>
+      <option value="Bueno">Bueno</option>
+      <option value="Regular">Regular</option>
+      <option value="Malo">Malo</option>
+    </select>
 
-    <label>Accesorios (cable, estuche, cabezal):</label>
-    <input type="text" name="accesorios" required />
+    <label>Accesorios:</label><br/>
+    <label><input type="checkbox" name="accesorios" value="Estuche" /> Estuche</label><br/>
+    <label><input type="checkbox" name="accesorios" value="Batería" /> Batería</label><br/>
+    <label><input type="checkbox" name="accesorios" value="Cargador" /> Cargador</label><br/>
+    <label><input type="checkbox" name="accesorios" value="Cable" /> Cable</label><br/>
 
     <label>Estado batería:</label>
     <input type="text" name="estado_bateria" required />
 
-    <label>Observaciones / Apps instaladas:</label>
+    <label>Operación:</label>
+    <select name="operacion" required>
+      <option value="">Seleccione...</option>
+      <option value="Preventa">Preventa</option>
+      <option value="Venta">Venta</option>
+      <option value="Moderno">Moderno</option>
+    </select>
+
+    <label>Observaciones:</label>
     <textarea name="observaciones" rows="3"></textarea>
 
     <label>Serial del equipo:</label>
@@ -66,6 +84,14 @@
     <button type="submit">Enviar</button>
     <p id="estado"></p>
   </form>
+
+  <script>
+    // Establecer fecha automática
+    document.addEventListener("DOMContentLoaded", () => {
+      const hoy = new Date().toISOString().split("T")[0];
+      document.getElementById("fecha").value = hoy;
+    });
+  </script>
 
   <script src="script.js"></script>
 </body>
