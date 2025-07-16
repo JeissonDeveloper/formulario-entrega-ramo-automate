@@ -24,23 +24,27 @@
   <h2>Formulario de Entrega RAMO - TC27</h2>
 
   <form id="formulario">
-    <label>Cédula:</label>
-    <input type="text" name="cedula" required />
-
-    <label>Agencia:</label>
-    <input type="text" name="agencia" required />
-
-    <label>Nombre colaborador:</label>
-    <input type="text" name="nombre_colaborador" required />
-
+    <!-- FECHA -->
     <label>Fecha actual:</label>
     <input type="text" name="fecha" id="fecha" readonly />
 
-    <label>Código SAP:</label>
-    <input type="text" name="codigo_sap" required />
+    <!-- CÉDULA -->
+    <label>Cédula:</label>
+    <input type="text" name="cedula" id="cedula" required />
+
+    <!-- CAMPOS QUE SE LLENAN AUTOMÁTICAMENTE -->
+    <label>Nombre colaborador:</label>
+    <input type="text" name="nombre_colaborador" id="nombre_colaborador" readonly />
+
+    <label>Agencia:</label>
+    <input type="text" name="agencia" id="agencia" readonly />
 
     <label>Teléfono del equipo:</label>
-    <input type="text" name="telefono" required />
+    <input type="text" name="telefono" id="telefono" readonly />
+
+    <!-- CAMPOS RESTANTES -->
+    <label>Código SAP:</label>
+    <input type="text" name="codigo_sap" required />
 
     <label>Estado del equipo:</label>
     <select name="estado_equipo" required>
@@ -78,10 +82,12 @@
     <label>Serial del equipo:</label>
     <input type="text" id="serial" name="serial" readonly />
 
+    <!-- FIRMA DIGITAL -->
     <label>Firma digital (use el dedo o mouse):</label>
     <canvas id="canvas"></canvas>
     <button type="button" onclick="limpiarFirma()">Limpiar firma</button>
 
+    <!-- CONDICIONES -->
     <label style="margin-top: 15px;">
       <input type="checkbox" id="aceptaCondiciones" required />
       He leído y acepto estas condiciones.
