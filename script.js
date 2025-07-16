@@ -1,3 +1,4 @@
+<script>
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -87,10 +88,6 @@ formulario.nombre.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
 
-formulario.apellido.addEventListener("input", (e) => {
-  e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
-});
-
 formulario.cedula.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
@@ -106,6 +103,31 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
+// AUTOCOMPLETAR campos desde Excel al digitar la cédula
+formulario.cedula.addEventListener("blur", async () => {
+  const cedula = formulario.cedula.value.trim();
+  if (cedula === "") return;
+
+  try {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbxEjWSopZZv_Td8w7MLN2kuUmtUAZJHd-XLl8fe68MxHkz5hfUV13A8txW6zB7LL2u3/exec?cedula=" + cedula);
+    const data = await response.json();
+
+    if (data && data.nombre_colaborador) {
+      formulario.nombre.value = data.nombre_colaborador || "";
+      formulario.telefono.value = data.telefono || "";
+      formulario.codigo_sap.value = data.codigo_sap || "";
+      formulario.serial.value = data.serial || "";
+      formulario.operacion.value = data.operacion || "";
+      formulario.agencia.value = data.agencia || "";
+    } else {
+      alert("⚠️ No se encontró información para esta cédula.");
+    }
+  } catch (error) {
+    console.error("Error al consultar datos:", error);
+    alert("❌ Error al consultar datos de la cédula.");
+  }
+});
+
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
   const estado = document.getElementById("estado");
@@ -116,13 +138,12 @@ formulario.addEventListener("submit", async (e) => {
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  // Capturar firma como imagen JPG en base64 P U R O ✅
+  // Capturar firma como imagen JPG en base64
   const firmaDataURL = canvas.toDataURL("image/jpeg", 0.95);
-  const firmaBase64 = firmaDataURL.split(",")[1]; // 👈 Solo el contenido sin encabezado
+  const firmaBase64 = firmaDataURL.split(",")[1];
 
   const data = {
     nombre: formulario.nombre.value,
-    apellido: formulario.apellido.value,
     cedula: formulario.cedula.value,
     fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
@@ -131,6 +152,7 @@ formulario.addEventListener("submit", async (e) => {
     accesorios: accesoriosSeleccionados,
     estado_bateria: formulario.estado_bateria.value,
     operacion: formulario.operacion.value,
+    agencia: formulario.agencia.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
     firma: firmaBase64
@@ -159,3 +181,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+</script>
