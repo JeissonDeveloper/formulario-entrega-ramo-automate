@@ -84,7 +84,7 @@ function limpiarLocalStorage() {
 }
 
 // Validaciones de campos
-formulario.nombre.addEventListener("input", (e) => {
+formulario.nombre_colaborador.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
 
@@ -103,6 +103,12 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
+// Establecer la fecha actual automáticamente
+window.addEventListener('DOMContentLoaded', () => {
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('fecha').value = hoy;
+});
+
 // AUTOCOMPLETAR campos desde Excel al digitar la cédula
 formulario.cedula.addEventListener("blur", async () => {
   const cedula = formulario.cedula.value.trim();
@@ -113,7 +119,7 @@ formulario.cedula.addEventListener("blur", async () => {
     const data = await response.json();
 
     if (data && data.nombre_colaborador) {
-      formulario.nombre.value = data.nombre_colaborador || "";
+      formulario.nombre_colaborador.value = data.nombre_colaborador || "";
       formulario.telefono.value = data.telefono || "";
       formulario.codigo_sap.value = data.codigo_sap || "";
       formulario.serial.value = data.serial || "";
@@ -133,6 +139,13 @@ formulario.addEventListener("submit", async (e) => {
   const estado = document.getElementById("estado");
   estado.innerText = "Enviando datos...";
 
+  // Validar aceptación de condiciones
+  const acepta = document.getElementById("aceptaCondiciones");
+  if (!acepta.checked) {
+    estado.innerText = "❌ Debes aceptar las condiciones antes de enviar.";
+    return;
+  }
+
   // Obtener accesorios seleccionados (checkboxes)
   const accesoriosSeleccionados = Array.from(
     formulario.querySelectorAll("input[name='accesorios']:checked")
@@ -143,7 +156,7 @@ formulario.addEventListener("submit", async (e) => {
   const firmaBase64 = firmaDataURL.split(",")[1];
 
   const data = {
-    nombre: formulario.nombre.value,
+    nombre: formulario.nombre_colaborador.value,
     cedula: formulario.cedula.value,
     fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
@@ -182,3 +195,4 @@ formulario.addEventListener("submit", async (e) => {
 
 obtenerSerialDesdeURL();
 </script>
+
