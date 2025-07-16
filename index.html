@@ -3,100 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulario Entrega RAMO</title>
-  <link rel="stylesheet" href="estilos.css">
+  <title>Formulario SOTI - RAMO</title>
+  <link rel="stylesheet" href="estilos.css"/>
 </head>
 <body>
-  <header>
-    <img src="logo-ramo.png" alt="Logo RAMO" style="max-width: 180px;" />
-  </header>
+  <form id="formulario-soti">
+    <h2>Formulario de Entrega de Dispositivo</h2>
 
-  <div style="background-color: #f8f8f8; padding: 15px; margin-top: 10px; border: 1px solid #ccc; font-size: 14px;">
-    <strong>Condiciones de uso:</strong><br/>
-    Los elementos son de uso exclusivo de la Organización Ramo para la ejecución de sus actividades Comerciales.  
-    El anterior equipo y los accesorios no podrán ser utilizados para otras labores distintas a las establecidas para la venta, ni manipulados por terceras personas, por lo tanto cualquier daño o pérdida, por negligencia, mal manejo, y/o descuido del funcionario, lo harán responsable del costo estipulado de dichos elementos.  
-    En caso de presentarse alguna de las anteriores situaciones, la empresa efectuará las investigaciones a que haya lugar.  
-    En  caso de alguna novedad por uso de cualquiera de los elementos asignados, se deberá informar al Jefe inmediato para hacer el trámite de reposición y/o arreglo respectivo.  
-    Si el funcionario se retira de la empresa, deberá entregar los elementos, en las mismas condiciones que le fueron asignados.  
-    Por favor mantenerlo en buen estado, usarlo con estuche para evitar pérdida y daños físicos, igualmente hacer la carga con su cargador y cable original.
-  </div>
+    <!-- Cédula -->
+    <label for="cedula">Cédula:</label>
+    <input type="text" name="cedula" id="cedula" required />
 
-  <h2>Formulario de Entrega RAMO - TC27</h2>
+    <!-- Nombre Colaborador (Autocompletado) -->
+    <label for="nombres">Nombre Colaborador:</label>
+    <input type="text" name="nombres" id="nombres" readonly />
 
-  <form id="formulario">
-    <label>Nombres:</label>
-    <input type="text" name="nombre" required />
+    <!-- Agencia -->
+    <label for="agencia">Agencia:</label>
+    <input type="text" name="agencia" id="agencia" readonly />
 
-    <label>Apellidos:</label>
-    <input type="text" name="apellido" required />
+    <!-- Teléfono (Autocompletado) -->
+    <label for="telefono">Teléfono:</label>
+    <input type="text" name="telefono" id="telefono" readonly />
 
-    <label>Cédula:</label>
-    <input type="text" name="cedula" required />
+    <!-- Código SAP -->
+    <label for="codigo_sap">Código SAP:</label>
+    <input type="text" name="codigo_sap" id="codigo_sap" required />
 
-    <label>Fecha actual:</label>
-    <input type="text" name="fecha" id="fecha" readonly />
+    <!-- Fecha actual (automática) -->
+    <label for="fecha">Fecha actual:</label>
+    <input type="date" name="fecha" id="fecha" readonly />
 
-    <label>Código SAP:</label>
-    <input type="text" name="codigo_sap" required />
-
-    <label>Teléfono del equipo:</label>
-    <input type="text" name="telefono" required />
-
-    <label>Estado del equipo:</label>
-    <select name="estado_equipo" required>
+    <!-- Estado del equipo -->
+    <label for="estado_equipo">Estado del equipo:</label>
+    <select name="estado_equipo" id="estado_equipo" required>
       <option value="">Seleccione...</option>
       <option value="Bueno">Bueno</option>
       <option value="Regular">Regular</option>
       <option value="Malo">Malo</option>
-      <option value="Nuevo">Nuevo</option> <!-- NUEVO AGREGADO -->
     </select>
 
-    <label>Accesorios:</label>
-    <div class="accesorios-container">
-      <label><input type="checkbox" name="accesorios" value="Estuche" /> Estuche</label>
-      <label><input type="checkbox" name="accesorios" value="Batería" /> Batería</label>
-      <label><input type="checkbox" name="accesorios" value="Cargador" /> Cargador</label>
-      <label><input type="checkbox" name="accesorios" value="Cable" /> Cable</label>
-    </div> 
-
-    <label>Estado batería:</label>
-    <input type="text" name="estado_bateria" required />
-
-    <label>Operación:</label>
-    <select name="operacion" required>
+    <!-- Operación -->
+    <label for="operacion">Operación:</label>
+    <select name="operacion" id="operacion" required>
       <option value="">Seleccione...</option>
-      <option value="Gestor PV">Gestor PV</option>
       <option value="Preventa">Preventa</option>
-      <option value="Canal Moderno">Canal Moderno</option>
-      <option value="Logística">Logística</option>
-      <option value="Eagle">Eagle</option>
+      <option value="Venta">Venta</option>
+      <option value="Moderno">Moderno</option>
     </select>
 
-    <label>Observaciones:</label>
-    <textarea name="observaciones" rows="3"></textarea>
+    <!-- Accesorios (checkbox) -->
+    <fieldset>
+      <legend>Accesorios:</legend>
+      <label><input type="checkbox" name="accesorios" value="ESTUCHE"/> Estuche</label>
+      <label><input type="checkbox" name="accesorios" value="BATERÍA"/> Batería</label>
+      <label><input type="checkbox" name="accesorios" value="CARGADOR"/> Cargador</label>
+      <label><input type="checkbox" name="accesorios" value="CABLE"/> Cable</label>
+    </fieldset>
 
-    <label>Serial del equipo:</label>
-    <input type="text" id="serial" name="serial" readonly />
+    <!-- Estado de batería -->
+    <label for="estado_bateria">Estado de la batería:</label>
+    <input type="text" name="estado_bateria" id="estado_bateria" required />
 
-    <label>Firma digital (use el dedo o mouse):</label>
-    <canvas id="canvas"></canvas>
-    <button type="button" onclick="limpiarFirma()">Limpiar firma</button>
+    <!-- Observaciones -->
+    <label for="observaciones">Observaciones:</label>
+    <textarea name="observaciones" id="observaciones" rows="3"></textarea>
 
-    <label style="margin-top: 15px;">
-      <input type="checkbox" id="aceptaCondiciones" required />
-      He leído y acepto estas condiciones.
-    </label>
+    <!-- Serial del equipo -->
+    <label for="serial">Serial del equipo:</label>
+    <input type="text" name="serial" id="serial" readonly />
 
+    <!-- Firma -->
+    <label for="firma">Firma:</label>
+    <canvas id="canvas" width="300" height="150" style="border:1px solid #000;"></canvas>
+    <input type="hidden" name="firma" id="firma" />
+
+    <!-- Botones -->
     <button type="submit">Enviar</button>
-    <p id="estado"></p>
+    <button type="button" onclick="limpiarFirma()">Limpiar Firma</button>
   </form>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const hoy = new Date().toISOString().split("T")[0];
-      document.getElementById("fecha").value = hoy;
-    });
-  </script>
 
   <script src="script.js"></script>
 </body>
