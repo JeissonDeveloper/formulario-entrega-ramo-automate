@@ -1,4 +1,3 @@
-<script>
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -10,7 +9,7 @@ function ajustarCanvas() {
 }
 ajustarCanvas();
 
-// Eventos para firma
+// Firma
 canvas.addEventListener("mousedown", () => dibujando = true);
 canvas.addEventListener("mouseup", () => { dibujando = false; ctx.beginPath(); });
 canvas.addEventListener("mouseout", () => dibujando = false);
@@ -83,19 +82,16 @@ function limpiarLocalStorage() {
   }
 }
 
-// Validaciones de campos
+// Validaciones
 formulario.nombre_colaborador.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
-
 formulario.cedula.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
-
 formulario.codigo_sap.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
-
 formulario.telefono.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
@@ -103,52 +99,61 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
-// Establecer la fecha actual automáticamente
-window.addEventListener('DOMContentLoaded', () => {
-  const hoy = new Date().toISOString().split('T')[0];
-  document.getElementById('fecha').value = hoy;
+// Fecha automática
+window.addEventListener("DOMContentLoaded", () => {
+  const hoy = new Date().toISOString().split("T")[0];
+  document.getElementById("fecha").value = hoy;
 });
 
-// AUTOCOMPLETAR campos desde Excel al digitar la cédula
-formulario.cedula.addEventListener("blur", async () => {
+// 🔍 Buscar datos por cédula desde Power Automate
+async function buscarColaborador() {
   const cedula = formulario.cedula.value.trim();
-  if (cedula === "") return;
+  if (cedula === "") {
+    alert("Por favor ingrese una cédula válida.");
+    return;
+  }
 
   try {
-    const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg" + cedula);
+    const response = await fetch(
+      "https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cedula })
+      }
+    );
+
     const data = await response.json();
 
     if (data && data.nombre_colaborador) {
       formulario.nombre_colaborador.value = data.nombre_colaborador || "";
-      formulario.telefono.value = data.telefono || "";     
+      formulario.telefono.value = data.telefono || "";
       formulario.agencia.value = data.agencia || "";
     } else {
       alert("⚠️ No se encontró información para esta cédula.");
     }
   } catch (error) {
     console.error("Error al consultar datos:", error);
-    alert("❌ Error al consultar datos de la cédula.");
+    alert("❌ Error al consultar datos.");
   }
-});
+}
 
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
   const estado = document.getElementById("estado");
   estado.innerText = "Enviando datos...";
 
-  // Validar aceptación de condiciones
-  const acepta = document.getElementById("aceptaCondiciones");
-  if (!acepta.checked) {
+  if (!document.getElementById("aceptaCondiciones").checked) {
     estado.innerText = "❌ Debes aceptar las condiciones antes de enviar.";
     return;
   }
 
-  // Obtener accesorios seleccionados (checkboxes)
   const accesoriosSeleccionados = Array.from(
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  // Capturar firma como imagen JPG en base64
   const firmaDataURL = canvas.toDataURL("image/jpeg", 0.95);
   const firmaBase64 = firmaDataURL.split(",")[1];
 
@@ -191,5 +196,3 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
-</script>
-
