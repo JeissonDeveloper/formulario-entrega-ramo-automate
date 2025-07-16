@@ -48,14 +48,15 @@
       <option value="Bueno">Bueno</option>
       <option value="Regular">Regular</option>
       <option value="Malo">Malo</option>
+      <option value="Nuevo">Nuevo</option> <!-- NUEVO AGREGADO -->
     </select>
 
     <label>Accesorios:</label>
     <div class="accesorios-container">
-    <label><input type="checkbox" name="accesorios" value="Estuche" /> Estuche</label>
-    <label><input type="checkbox" name="accesorios" value="Batería" /> Batería</label>
-    <label><input type="checkbox" name="accesorios" value="Cargador" /> Cargador</label>
-    <label><input type="checkbox" name="accesorios" value="Cable" /> Cable</label>
+      <label><input type="checkbox" name="accesorios" value="Estuche" /> Estuche</label>
+      <label><input type="checkbox" name="accesorios" value="Batería" /> Batería</label>
+      <label><input type="checkbox" name="accesorios" value="Cargador" /> Cargador</label>
+      <label><input type="checkbox" name="accesorios" value="Cable" /> Cable</label>
     </div> 
 
     <label>Estado batería:</label>
@@ -64,9 +65,11 @@
     <label>Operación:</label>
     <select name="operacion" required>
       <option value="">Seleccione...</option>
+      <option value="Gestor PV">Gestor PV</option>
       <option value="Preventa">Preventa</option>
-      <option value="Venta">Venta</option>
-      <option value="Moderno">Moderno</option>
+      <option value="Canal Moderno">Canal Moderno</option>
+      <option value="Logística">Logística</option>
+      <option value="Eagle">Eagle</option>
     </select>
 
     <label>Observaciones:</label>
@@ -98,3 +101,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
