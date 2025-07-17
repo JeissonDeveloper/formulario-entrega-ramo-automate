@@ -5,6 +5,7 @@ body, html {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f5f5;
   color: #333;
+  scroll-behavior: smooth;
 }
 
 /* Encabezado */
@@ -29,7 +30,12 @@ h2 {
   animation: fadeIn 1.2s ease-in-out;
 }
 
-/* Animación de entrada para el formulario */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Formulario */
 form {
   max-width: 620px;
   margin: 30px auto;
@@ -38,11 +44,6 @@ form {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
   border-radius: 10px;
   animation: fadeInUp 1.2s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
@@ -68,17 +69,17 @@ textarea {
   border-radius: 6px;
   font-size: 14px;
   box-sizing: border-box;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
   background-color: #fff;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
 }
 
-/* Efecto al enfocar */
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
   border-color: #B70000;
-  box-shadow: 0 0 8px rgba(183, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(183, 0, 0, 0.25);
+  transform: scale(1.01);
 }
 
 /* Textarea ajustable verticalmente */
@@ -95,11 +96,12 @@ textarea {
   background-color: #fff;
   margin-top: 10px;
   border-radius: 6px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #canvas:hover {
   border-color: #B70000;
+  box-shadow: 0 0 6px rgba(183, 0, 0, 0.1);
 }
 
 /* Botón principal */
@@ -114,11 +116,16 @@ button {
   cursor: pointer;
   font-size: 15px;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
   background-color: #940000;
   transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 /* Mensaje de estado */
@@ -141,7 +148,6 @@ input[type="checkbox"] {
   transition: transform 0.2s ease;
 }
 
-/* Animación de checkbox */
 input[type="checkbox"]:checked {
   transform: scale(1.2);
 }
@@ -209,6 +215,33 @@ hr {
   height: 1px;
   background-color: #ddd;
   margin: 30px 0;
+}
+
+/* Animación para select */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 98%;
+  background-position-y: 12px;
+  background-size: 14px;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: #B70000;
+}
+
+/* Estilo para date pickers (solo si los usas visualmente en PC) */
+input[type="date"] {
+  cursor: pointer;
+}
+
+/* Animación sutil al pasar por cualquier input */
+input[type="text"]:hover,
+select:hover,
+textarea:hover {
+  background-color: #fcfcfc;
 }
 
 /* Responsive */
