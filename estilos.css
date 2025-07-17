@@ -280,6 +280,22 @@ textarea:hover {
   .accesorios-container {
     flex-direction: column;
   }
+
+  .input-con-estado {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-con-estado button,
+  .input-con-estado input {
+    width: 100%;
+  }
+
+  #estado-busqueda {
+    margin-left: 0;
+    margin-top: 6px;
+    text-align: center;
+  }
 }
 
 /* NUEVO: contenedor para buscar con ícono */
