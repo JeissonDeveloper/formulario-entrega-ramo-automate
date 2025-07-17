@@ -11,7 +11,7 @@ function ajustarCanvas() {
 }
 ajustarCanvas();
 
-// Firma
+// Fecha automática
 document.addEventListener("DOMContentLoaded", () => {
   const hoy = new Date().toISOString().split("T")[0];
   document.getElementById("fecha").value = hoy;
@@ -61,6 +61,7 @@ function obtenerSerialDesdeURL() {
   }
 }
 
+// LocalStorage
 function guardarEnLocalStorage() {
   const campos = formulario.elements;
   for (let i = 0; i < campos.length; i++) {
@@ -89,7 +90,7 @@ function limpiarLocalStorage() {
   }
 }
 
-// Validaciones
+// Validaciones básicas
 formulario.nombre_colaborador.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
@@ -106,7 +107,7 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
-// Buscar datos por cédula desde Power Automate
+// Buscar colaborador por cédula
 async function buscarColaborador() {
   const cedula = formulario.cedula.value.trim();
   if (cedula === "") {
@@ -115,6 +116,7 @@ async function buscarColaborador() {
   }
 
   estadoBusqueda.innerHTML = '<span class="spinner-busqueda"></span>';
+  estado.innerText = "";
 
   try {
     const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg", {
@@ -124,16 +126,19 @@ async function buscarColaborador() {
     });
 
     const data = await response.json();
+
     if (data && data.nombre_colaborador) {
-    formulario.nombre_colaborador.value = data.nombre_colaborador || "";
-    formulario.telefono.value = data.telefono || "";
-    formulario.agencia.value = data.agencia || "";
-    estado.innerText = "✅ Datos encontrados correctamente.";
+      formulario.nombre_colaborador.value = data.nombre_colaborador || "";
+      formulario.telefono.value = data.telefono || "";
+      formulario.agencia.value = data.agencia || "";
+      estadoBusqueda.innerHTML = "✅";
+      estado.innerText = "✅ Datos encontrados correctamente.";
     } else {
-    formulario.nombre_colaborador.value = "";
-    formulario.telefono.value = "";
-    formulario.agencia.value = "";
-    estado.innerText = "⚠️ No se encontró información para esta cédula.";
+      formulario.nombre_colaborador.value = "";
+      formulario.telefono.value = "";
+      formulario.agencia.value = "";
+      estadoBusqueda.innerHTML = "❌";
+      estado.innerText = "⚠️ No se encontró información para esta cédula.";
     }
 
   } catch (error) {
@@ -143,7 +148,7 @@ async function buscarColaborador() {
   }
 }
 
-// Enviar datos
+// Envío del formulario
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
   estado.innerHTML = '<span class="spinner"></span> Enviando datos...';
@@ -189,7 +194,7 @@ formulario.addEventListener("submit", async (e) => {
       formulario.reset();
       limpiarFirma();
       limpiarLocalStorage();
-      estadoBusqueda.innerHTML = ""; // limpia chulo/X del buscar
+      estadoBusqueda.innerHTML = "";
     } else {
       estado.innerText = "❌ Error al enviar: " + response.status;
     }
@@ -199,3 +204,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
