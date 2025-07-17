@@ -139,6 +139,29 @@ button:active {
 
 #estado.mostrar {
   opacity: 1;
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Loader tipo spinner */
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #B70000;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: girar 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Estilo checkbox */
@@ -232,7 +255,7 @@ select:hover {
   border-color: #B70000;
 }
 
-/* Estilo para date pickers (solo si los usas visualmente en PC) */
+/* Estilo para date pickers */
 input[type="date"] {
   cursor: pointer;
 }
@@ -258,3 +281,4 @@ textarea:hover {
     flex-direction: column;
   }
 }
+
