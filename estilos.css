@@ -7,6 +7,7 @@ body, html {
   color: #333;
 }
 
+/* Encabezado */
 header {
   text-align: center;
   padding: 20px;
@@ -14,12 +15,14 @@ header {
   border-bottom: 1px solid #ddd;
 }
 
+/* Título principal */
 h2 {
   text-align: center;
   margin-top: 20px;
   color: #B70000;
 }
 
+/* Animación de entrada para el formulario */
 form {
   max-width: 600px;
   margin: 20px auto;
@@ -27,14 +30,22 @@ form {
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+  animation: fadeIn 1s ease-in-out;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Etiquetas */
 label {
   display: block;
   margin-top: 15px;
   font-weight: 600;
 }
 
+/* Campos de texto, select y textarea */
 input[type="text"],
 select,
 textarea {
@@ -45,12 +56,24 @@ textarea {
   border-radius: 6px;
   font-size: 14px;
   box-sizing: border-box;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
+/* Efecto al enfocar */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #B70000;
+  box-shadow: 0 0 8px rgba(183, 0, 0, 0.2);
+}
+
+/* Textarea con redimensionamiento vertical */
 textarea {
   resize: vertical;
 }
 
+/* Canvas para firma */
 #canvas {
   width: 100%;
   height: 150px;
@@ -58,43 +81,51 @@ textarea {
   background-color: #fff;
   margin-top: 10px;
   border-radius: 6px;
-  cursor: crosshair;
 }
 
+/* Botón principal */
 button {
+  margin-top: 20px;
   padding: 10px 20px;
+  background-color: #B70000;
+  color: white;
   border: none;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
   font-size: 15px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  opacity: 0.9;
+  background-color: #940000;
+  transform: scale(1.05);
 }
 
-.btn-principal {
-  margin-top: 20px;
-  background-color: #B70000;
-  color: white;
-}
-
-.btn-secundario {
-  background-color: #cccccc;
-  color: #333;
-}
-
+/* Mensaje de estado (como éxito o error) */
 #estado {
   margin-top: 10px;
   font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }
 
+#estado.mostrar {
+  opacity: 1;
+}
+
+/* Estilo checkbox simple */
 input[type="checkbox"] {
   margin-right: 8px;
+  transition: transform 0.2s ease;
 }
 
-/* Accesorios checkboxes */
+/* Animación cuando se marca el checkbox */
+input[type="checkbox"]:checked {
+  transform: scale(1.1);
+}
+
+/* Contenedor para los accesorios con diseño amigable */
 .accesorios-container {
   display: flex;
   flex-wrap: wrap;
@@ -130,21 +161,15 @@ label[for="aceptaCondiciones"] {
   font-size: 14px;
 }
 
-/* Estilo del bloque de condiciones de uso */
+/* Condiciones de uso */
 .condiciones-uso {
-  margin: 20px auto 30px;
-  max-width: 600px;
-  background-color: #fff7f7;
-  border-left: 5px solid #B70000;
-  padding: 20px;
+  margin-top: 30px;
   font-size: 14px;
+  background-color: #fff8f8;
+  border: 1px solid #f0dcdc;
+  padding: 15px;
+  border-radius: 6px;
   line-height: 1.6;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  animation: fadeIn 1.5s ease-in-out;
 }
 
-/* Input con botón al lado */
-.input-con-boton {
-  display: flex;
-  gap: 10px;
-}
