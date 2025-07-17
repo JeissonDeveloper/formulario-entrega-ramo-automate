@@ -172,13 +172,3 @@ label[for="aceptaCondiciones"] {
   line-height: 1.6;
   animation: fadeIn 1.5s ease-in-out;
 }
-
-#fecha {
-  transition: background-color 0.4s ease;
-}
-
-#fecha:read-only {
-  background-color: #e9f5ff;
-  border: 1px solid #a0d1f5;
-}
-
