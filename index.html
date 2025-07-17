@@ -54,11 +54,12 @@
     <input type="text" name="fecha" id="fecha" readonly />
 
     <label>Cédula:</label>
-    <div class="input-con-boton">
-      <input type="text" name="cedula" id="cedula" required />
-      <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
-      <span id="estado-busqueda"></span>
+    <div class="input-con-estado">
+    <input type="text" name="cedula" id="cedula" required />
+    <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
+    <span id="estado-busqueda" class="estado-icono"></span>
     </div>
+
 
     <label>Nombre del colaborador:</label>
     <input type="text" name="nombres" id="nombre_colaborador" readonly />
