@@ -267,37 +267,6 @@ textarea:hover {
   background-color: #fcfcfc;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  form {
-    padding: 20px;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .accesorios-container {
-    flex-direction: column;
-  }
-
-  .input-con-estado {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .input-con-estado button,
-  .input-con-estado input {
-    width: 100%;
-  }
-
-  #estado-busqueda {
-    margin-left: 0;
-    margin-top: 6px;
-    text-align: center;
-  }
-}
-
 /* NUEVO: contenedor para buscar con ícono */
 .input-con-estado {
   display: flex;
@@ -326,4 +295,35 @@ textarea:hover {
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
   display: inline-block;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  form {
+    padding: 20px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .accesorios-container {
+    flex-direction: column;
+  }
+
+  .input-con-estado {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-con-estado input[type="text"],
+  .input-con-estado button,
+  .input-con-estado #estado-busqueda {
+    width: 100%;
+  }
+
+  #estado-busqueda {
+    margin-top: 10px;
+    text-align: center;
+  }
 }
