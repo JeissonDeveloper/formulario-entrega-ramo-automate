@@ -5,6 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Formulario Entrega RAMO</title>
   <link rel="stylesheet" href="estilos.css">
+  <style>
+    /* Spinner animado */
+    .spinner-busqueda {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-top: 2px solid #B70000;
+      border-radius: 50%;
+      animation: girar 0.6s linear infinite;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    @keyframes girar {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #estado-busqueda {
+      font-size: 1.2em;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -32,6 +57,7 @@
     <div class="input-con-boton">
       <input type="text" name="cedula" id="cedula" required />
       <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
+      <span id="estado-busqueda"></span>
     </div>
 
     <label>Nombre del colaborador:</label>
@@ -108,4 +134,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
