@@ -58,13 +58,11 @@ textarea {
   background-color: #fff;
   margin-top: 10px;
   border-radius: 6px;
+  cursor: crosshair;
 }
 
 button {
-  margin-top: 20px;
   padding: 10px 20px;
-  background-color: #B70000;
-  color: white;
   border: none;
   border-radius: 6px;
   font-weight: bold;
@@ -73,7 +71,18 @@ button {
 }
 
 button:hover {
-  background-color: #940000;
+  opacity: 0.9;
+}
+
+.btn-principal {
+  margin-top: 20px;
+  background-color: #B70000;
+  color: white;
+}
+
+.btn-secundario {
+  background-color: #cccccc;
+  color: #333;
 }
 
 #estado {
@@ -85,7 +94,7 @@ input[type="checkbox"] {
   margin-right: 8px;
 }
 
-/* Estética de los checkboxes de accesorios */
+/* Accesorios checkboxes */
 .accesorios-container {
   display: flex;
   flex-wrap: wrap;
@@ -119,4 +128,23 @@ label[for="aceptaCondiciones"] {
   margin-top: 25px;
   font-weight: normal;
   font-size: 14px;
+}
+
+/* Estilo del bloque de condiciones de uso */
+.condiciones-uso {
+  margin: 20px auto 30px;
+  max-width: 600px;
+  background-color: #fff7f7;
+  border-left: 5px solid #B70000;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Input con botón al lado */
+.input-con-boton {
+  display: flex;
+  gap: 10px;
 }
