@@ -282,3 +282,32 @@ textarea:hover {
   }
 }
 
+/* NUEVO: contenedor para buscar con ícono */
+.input-con-estado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.input-con-estado input[type="text"] {
+  flex: 1;
+}
+
+.estado-icono {
+  font-size: 20px;
+  min-width: 24px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Spinner pequeño para búsqueda */
+.spinner-busqueda {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-top: 2px solid #B70000;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+  display: inline-block;
+}
