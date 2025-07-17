@@ -99,10 +99,12 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
-// Fecha automática
+// Fecha automática (🟢 Solo esta parte fue modificada)
 window.addEventListener("DOMContentLoaded", () => {
   const hoy = new Date().toISOString().split("T")[0];
-  document.getElementById("fecha").value = hoy;
+  const campoFecha = document.getElementById("fecha");
+  campoFecha.value = hoy;
+  campoFecha.readOnly = true; // Asegura que el campo sea solo lectura
 });
 
 // 🔍 Buscar datos por cédula desde Power Automate
@@ -196,3 +198,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
