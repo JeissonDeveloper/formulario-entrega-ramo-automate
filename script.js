@@ -1,7 +1,10 @@
+// script.js actualizado con spinner de carga y mensajes de estado
+
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let dibujando = false;
+const estado = document.getElementById("estado");
 
 function ajustarCanvas() {
   canvas.width = canvas.offsetWidth;
@@ -10,6 +13,11 @@ function ajustarCanvas() {
 ajustarCanvas();
 
 // Firma
+document.addEventListener("DOMContentLoaded", () => {
+  const hoy = new Date().toISOString().split("T")[0];
+  document.getElementById("fecha").value = hoy;
+});
+
 canvas.addEventListener("mousedown", () => dibujando = true);
 canvas.addEventListener("mouseup", () => { dibujando = false; ctx.beginPath(); });
 canvas.addEventListener("mouseout", () => dibujando = false);
@@ -99,13 +107,7 @@ formulario.telefono.addEventListener("input", (e) => {
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
-// Fecha automática
-window.addEventListener("DOMContentLoaded", () => {
-  const hoy = new Date().toISOString().split("T")[0];
-  document.getElementById("fecha").value = hoy;
-});
-
-// 🔍 Buscar datos por cédula desde Power Automate
+// Buscar datos por cédula desde Power Automate
 async function buscarColaborador() {
   const cedula = formulario.cedula.value.trim();
   if (cedula === "") {
@@ -113,37 +115,35 @@ async function buscarColaborador() {
     return;
   }
 
+  estado.innerHTML = '<span class="spinner"></span> Consultando datos...';
+  estado.classList.add("mostrar");
+
   try {
-    const response = await fetch(
-      "https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ cedula })
-      }
-    );
+    const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cedula })
+    });
 
     const data = await response.json();
-
     if (data && data.nombre_colaborador) {
       formulario.nombre_colaborador.value = data.nombre_colaborador || "";
       formulario.telefono.value = data.telefono || "";
       formulario.agencia.value = data.agencia || "";
+      estado.innerText = "✅ Datos encontrados correctamente.";
     } else {
-      alert("⚠️ No se encontró información para esta cédula.");
+      estado.innerText = "⚠️ No se encontró información para esta cédula.";
     }
   } catch (error) {
-    console.error("Error al consultar datos:", error);
-    alert("❌ Error al consultar datos.");
+    estado.innerText = "❌ Error al consultar datos.";
+    console.error(error);
   }
 }
 
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const estado = document.getElementById("estado");
-  estado.innerText = "Enviando datos...";
+  estado.innerHTML = '<span class="spinner"></span> Enviando datos...';
+  estado.classList.add("mostrar");
 
   if (!document.getElementById("aceptaCondiciones").checked) {
     estado.innerText = "❌ Debes aceptar las condiciones antes de enviar.";
@@ -176,9 +176,7 @@ formulario.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/94482b3719cd4885bc375babcd4bce2c/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fkBC4BmU3ht00DDw4xuImox05onAW0vptGdssjqvD6o", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
 
@@ -196,3 +194,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
