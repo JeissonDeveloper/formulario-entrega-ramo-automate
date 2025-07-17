@@ -125,15 +125,17 @@ async function buscarColaborador() {
 
     const data = await response.json();
     if (data && data.nombre_colaborador) {
-      formulario.nombre_colaborador.value = data.nombre_colaborador || "";
-      formulario.telefono.value = data.telefono || "";
-      formulario.agencia.value = data.agencia || "";
-      estadoBusqueda.innerHTML = "✅";
-      estado.innerText = "✅ Datos encontrados correctamente.";
+    formulario.nombre_colaborador.value = data.nombre_colaborador || "";
+    formulario.telefono.value = data.telefono || "";
+    formulario.agencia.value = data.agencia || "";
+    estado.innerText = "✅ Datos encontrados correctamente.";
     } else {
-      estadoBusqueda.innerHTML = "❌";
-      estado.innerText = "⚠️ No se encontró información para esta cédula.";
+    formulario.nombre_colaborador.value = "";
+    formulario.telefono.value = "";
+    formulario.agencia.value = "";
+    estado.innerText = "⚠️ No se encontró información para esta cédula.";
     }
+
   } catch (error) {
     estadoBusqueda.innerHTML = "❌";
     estado.innerText = "❌ Error al consultar datos.";
