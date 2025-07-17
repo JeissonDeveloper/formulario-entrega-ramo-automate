@@ -1,10 +1,9 @@
-// script.js actualizado con spinner de carga y mensajes de estado
-
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let dibujando = false;
 const estado = document.getElementById("estado");
+const estadoBusqueda = document.getElementById("estado-busqueda");
 
 function ajustarCanvas() {
   canvas.width = canvas.offsetWidth;
@@ -115,8 +114,7 @@ async function buscarColaborador() {
     return;
   }
 
-  estado.innerHTML = '<span class="spinner"></span> Consultando datos...';
-  estado.classList.add("mostrar");
+  estadoBusqueda.innerHTML = '<span class="spinner-busqueda"></span>';
 
   try {
     const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg", {
@@ -130,16 +128,20 @@ async function buscarColaborador() {
       formulario.nombre_colaborador.value = data.nombre_colaborador || "";
       formulario.telefono.value = data.telefono || "";
       formulario.agencia.value = data.agencia || "";
+      estadoBusqueda.innerHTML = "✅";
       estado.innerText = "✅ Datos encontrados correctamente.";
     } else {
+      estadoBusqueda.innerHTML = "❌";
       estado.innerText = "⚠️ No se encontró información para esta cédula.";
     }
   } catch (error) {
+    estadoBusqueda.innerHTML = "❌";
     estado.innerText = "❌ Error al consultar datos.";
     console.error(error);
   }
 }
 
+// Enviar datos
 formulario.addEventListener("submit", async (e) => {
   e.preventDefault();
   estado.innerHTML = '<span class="spinner"></span> Enviando datos...';
@@ -185,6 +187,7 @@ formulario.addEventListener("submit", async (e) => {
       formulario.reset();
       limpiarFirma();
       limpiarLocalStorage();
+      estadoBusqueda.innerHTML = ""; // limpia chulo/X del buscar
     } else {
       estado.innerText = "❌ Error al enviar: " + response.status;
     }
@@ -194,4 +197,3 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
-
