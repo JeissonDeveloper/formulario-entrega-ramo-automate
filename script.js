@@ -1,4 +1,4 @@
-// script.js actualizado con envío correcto de firma como PNG base64 completa
+// script.js actualizado con spinner de carga y mensajes de estado
 
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
@@ -165,8 +165,8 @@ formulario.addEventListener("submit", async (e) => {
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  // ENVIAMOS LA FIRMA CON EL ENCABEZADO COMPLETO (NO SOLO base64)
   const firmaDataURL = canvas.toDataURL("image/png");
+  const firmaBase64 = firmaDataURL.split(",")[1];
 
   const data = {
     nombre: formulario.nombre_colaborador.value,
@@ -181,7 +181,7 @@ formulario.addEventListener("submit", async (e) => {
     agencia: formulario.agencia.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
-    firma: firmaDataURL // AQUÍ VA CON "data:image/png;base64,..."
+    firma: firmaBase64
   };
 
   try {
@@ -206,4 +206,5 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
 
