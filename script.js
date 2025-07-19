@@ -1,4 +1,4 @@
-// script.js
+// script.js actualizado con envío correcto de firma como PNG base64 completa
 
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("fecha").value = hoy;
 });
 
-// Eventos de firma
 canvas.addEventListener("mousedown", () => dibujando = true);
 canvas.addEventListener("mouseup", () => { dibujando = false; ctx.beginPath(); });
 canvas.addEventListener("mouseout", () => dibujando = false);
@@ -113,7 +112,7 @@ cargarDesdeLocalStorage();
 // Buscar colaborador por cédula
 async function buscarColaborador() {
   const cedula = formulario.cedula.value.trim();
-  if (!cedula) {
+  if (cedula === "") {
     alert("Por favor ingrese una cédula válida.");
     return;
   }
@@ -127,12 +126,13 @@ async function buscarColaborador() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cedula })
     });
+
     const data = await response.json();
 
     if (data && data.nombre_colaborador) {
-      formulario.nombre_colaborador.value = data.nombre_colaborador;
-      formulario.telefono.value = data.telefono;
-      formulario.agencia.value = data.agencia;
+      formulario.nombre_colaborador.value = data.nombre_colaborador || "";
+      formulario.telefono.value = data.telefono || "";
+      formulario.agencia.value = data.agencia || "";
       estadoBusqueda.innerHTML = "✅";
       estado.innerText = "✅ Datos encontrados correctamente.";
     } else {
@@ -142,6 +142,7 @@ async function buscarColaborador() {
       estadoBusqueda.innerHTML = "❌";
       estado.innerText = "⚠️ No se encontró información para esta cédula.";
     }
+
   } catch (error) {
     estadoBusqueda.innerHTML = "❌";
     estado.innerText = "❌ Error al consultar datos.";
@@ -164,7 +165,7 @@ formulario.addEventListener("submit", async (e) => {
     formulario.querySelectorAll("input[name='accesorios']:checked")
   ).map(cb => cb.value).join(", ");
 
-  // ---> aquí capturamos la firma como PNG y guardamos TODO el dataURL:
+  // ENVIAMOS LA FIRMA CON EL ENCABEZADO COMPLETO (NO SOLO base64)
   const firmaDataURL = canvas.toDataURL("image/png");
 
   const data = {
@@ -180,8 +181,7 @@ formulario.addEventListener("submit", async (e) => {
     agencia: formulario.agencia.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
-    // enviamos TODO el dataURL (incluye 'data:image/png;base64,…'):
-    firma: firmaDataURL
+    firma: firmaDataURL // AQUÍ VA CON "data:image/png;base64,..."
   };
 
   try {
@@ -206,3 +206,4 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
