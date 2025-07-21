@@ -121,7 +121,7 @@ async function buscarColaborador() {
   estado.innerText = "";
 
   try {
-    const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/739b9a8a845f4960a244ce6b8e9228cb/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fHmjLuTbH7WPbACBvZthXYQZYM2jEK6sARJbFdbmugg", {
+    const response = await fetch("https://prod-29.westus.logic.azure.com:443/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HdukGAnPtKgdUMkC1kbIqxd6pRyp_oZ_Q35IAtZGr-M", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cedula })
@@ -185,7 +185,7 @@ formulario.addEventListener("submit", async (e) => {
   };
 
   try {
-    const response = await fetch("https://default03db959ef51543569100cc4a9dcf25.8b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/94482b3719cd4885bc375babcd4bce2c/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fkBC4BmU3ht00DDw4xuImox05onAW0vptGdssjqvD6o", {
+    const response = await fetch("https://prod-47.westus.logic.azure.com:443/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eYvcvi9mTH8wpW3_QaYhkhae6jiMGh4C38LaL1eEAZI", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
