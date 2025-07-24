@@ -1,5 +1,3 @@
-// script.js actualizado con spinner de carga y mensajes de estado
-
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -106,6 +104,14 @@ formulario.telefono.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
 
+// ✅ Validación para campo "lider" (solo letras)
+const inputLider = document.getElementById("lider");
+if (inputLider) {
+  inputLider.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+  });
+}
+
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
 
@@ -174,6 +180,7 @@ formulario.addEventListener("submit", async (e) => {
     fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
     telefono: formulario.telefono.value,
+    lider: formulario.lider.value, // ✅ Campo nuevo
     estado_equipo: formulario.estado_equipo.value,
     accesorios: accesoriosSeleccionados,
     estado_bateria: formulario.estado_bateria.value,
@@ -206,5 +213,6 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
+
 
 
