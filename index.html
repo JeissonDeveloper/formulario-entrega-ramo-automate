@@ -6,7 +6,6 @@
   <title>Formulario Entrega RAMO</title>
   <link rel="stylesheet" href="estilos.css">
   <style>
-    /* Spinner animado */
     .spinner-busqueda {
       display: inline-block;
       width: 18px;
@@ -36,7 +35,6 @@
     <img src="logo-ramo.png" alt="Logo RAMO" style="max-width: 180px;" />
   </header>
 
-  <!-- Condiciones de uso mejoradas -->
   <div class="condiciones-uso">
     <strong>Condiciones de uso:</strong><br/>
     Los elementos son de uso exclusivo de la Organización Ramo para la ejecución de sus actividades Comerciales.<br/><br/>
@@ -55,11 +53,10 @@
 
     <label>Cédula:</label>
     <div class="input-con-estado">
-    <input type="text" name="cedula" id="cedula" required />
-    <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
-    <span id="estado-busqueda" class="estado-icono"></span>
+      <input type="text" name="cedula" id="cedula" required />
+      <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
+      <span id="estado-busqueda" class="estado-icono"></span>
     </div>
-
 
     <label>Nombre del colaborador:</label>
     <input type="text" name="nombres" id="nombre_colaborador" readonly />
@@ -69,6 +66,10 @@
 
     <label>Teléfono del equipo:</label>
     <input type="text" name="telefono" id="telefono" readonly />
+
+    <!-- NUEVO CAMPO: Nombre del Líder -->
+    <label>Nombre del Líder:</label>
+    <input type="text" name="lider" id="lider" required />
 
     <label>Código SAP:</label>
     <input type="text" name="codigo_sap" required />
@@ -118,7 +119,6 @@
       He leído y acepto estas condiciones.
     </label>
 
-    <!-- Spinner de carga -->
     <div id="spinner" class="spinner" style="display:none;"></div>
 
     <button type="submit" class="btn-principal">Enviar</button>
@@ -135,3 +135,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
