@@ -1,3 +1,5 @@
+// script.js actualizado con campo líder y validación de solo letras
+
 const formulario = document.getElementById("formulario");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -94,6 +96,9 @@ function limpiarLocalStorage() {
 formulario.nombre_colaborador.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
 });
+formulario.lider.addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+});
 formulario.cedula.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
@@ -103,14 +108,6 @@ formulario.codigo_sap.addEventListener("input", (e) => {
 formulario.telefono.addEventListener("input", (e) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 });
-
-// ✅ Validación para campo "lider" (solo letras)
-const inputLider = document.getElementById("lider");
-if (inputLider) {
-  inputLider.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
-  });
-}
 
 formulario.addEventListener("input", guardarEnLocalStorage);
 cargarDesdeLocalStorage();
@@ -180,7 +177,6 @@ formulario.addEventListener("submit", async (e) => {
     fecha: formulario.fecha.value,
     codigo_sap: formulario.codigo_sap.value,
     telefono: formulario.telefono.value,
-    lider: formulario.lider.value, // ✅ Campo nuevo
     estado_equipo: formulario.estado_equipo.value,
     accesorios: accesoriosSeleccionados,
     estado_bateria: formulario.estado_bateria.value,
@@ -188,6 +184,7 @@ formulario.addEventListener("submit", async (e) => {
     agencia: formulario.agencia.value,
     observaciones: formulario.observaciones.value,
     serial: formulario.serial.value,
+    lider: formulario.lider.value,
     firma: firmaBase64
   };
 
@@ -213,6 +210,5 @@ formulario.addEventListener("submit", async (e) => {
 });
 
 obtenerSerialDesdeURL();
-
 
 
