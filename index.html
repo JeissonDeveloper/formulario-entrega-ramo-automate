@@ -3,136 +3,304 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulario Entrega RAMO</title>
+  <title>Acta de Entrega - RAMO V2</title>
   <link rel="stylesheet" href="estilos.css">
-  <style>
-    .spinner-busqueda {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid #ccc;
-      border-top: 2px solid #B70000;
-      border-radius: 50%;
-      animation: girar 0.6s linear infinite;
-      vertical-align: middle;
-      margin-left: 8px;
-    }
-
-    @keyframes girar {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    #estado-busqueda {
-      font-size: 1.2em;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-  </style>
 </head>
 <body>
   <header>
+    <!-- Asegúrate de que la imagen logo-ramo.png esté en la carpeta -->
     <img src="logo-ramo.png" alt="Logo RAMO" style="max-width: 180px;" />
   </header>
 
-  <div class="condiciones-uso">
+  <div class="condiciones-uso" style="max-width: 680px; margin: 20px auto;">
     <strong>Condiciones de uso:</strong><br/>
-    Los elementos son de uso exclusivo de la Organización Ramo para la ejecución de sus actividades Comerciales.<br/><br/>
-    El anterior equipo y los accesorios no podrán ser utilizados para otras labores distintas a las establecidas para la venta, ni manipulados por terceras personas, por lo tanto cualquier daño o pérdida, por negligencia, mal manejo, y/o descuido del funcionario, lo harán responsable del costo estipulado de dichos elementos.<br/><br/>
-    En caso de presentarse alguna de las anteriores situaciones, la empresa efectuará las investigaciones a que haya lugar.<br/><br/>
-    En caso de alguna novedad por uso de cualquiera de los elementos asignados, se deberá informar al Jefe inmediato para hacer el trámite de reposición y/o arreglo respectivo.<br/><br/>
-    Si el funcionario se retira de la empresa, deberá entregar los elementos, en las mismas condiciones que le fueron asignados.<br/><br/>
-    Por favor mantenerlo en buen estado, usarlo con estuche para evitar pérdida y daños físicos, igualmente hacer la carga con su cargador y cable original.
+    Los elementos son de uso exclusivo de la Organización Ramo para actividades comerciales.
+    El equipo no podrá ser usado para labores distintas a las establecidas.
+    Cualquier daño por negligencia será responsabilidad del funcionario.
+    En caso de retiro, debe entregar los elementos en las mismas condiciones.
   </div>
 
-  <h2>Formulario de Entrega RAMO - TC27</h2>
+  <h2>Acta de Entrega de Equipos Móviles</h2>
 
   <form id="formulario">
-    <label>Fecha actual:</label>
-    <input type="text" name="fecha" id="fecha" readonly />
+    
+    <!-- ========================================== -->
+    <!-- SECCIÓN 1: DATOS DEL COLABORADOR           -->
+    <!-- ========================================== -->
+    <h3 class="seccion-titulo">1. Datos del Colaborador (Quien Recibe)</h3>
 
-    <label>Cédula:</label>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <label>Ciudad:</label>
+            <input type="text" name="ciudad" id="ciudad" required placeholder="Ej: Bogotá" />
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label>Fecha Actual:</label>
+            <input type="text" name="fecha" id="fecha" readonly />
+        </div>
+    </div>
+
+    <label>Cédula Colaborador:</label>
     <div class="input-con-estado">
-      <input type="text" name="cedula" id="cedula" required />
-      <button type="button" class="btn-secundario" onclick="buscarColaborador()">Buscar</button>
-      <span id="estado-busqueda" class="estado-icono"></span>
+      <input type="text" name="cedula" id="cedula" required placeholder="Sin puntos ni comas" />
+      <button type="button" class="btn-secundario" onclick="buscarColaborador()">🔍 Buscar</button>
+      <span id="estado-busqueda-colaborador" class="estado-icono"></span>
     </div>
 
-    <label>Nombre del colaborador:</label>
-    <input type="text" name="nombres" id="nombre_colaborador" readonly />
+    <label>Nombre Completo:</label>
+    <input type="text" name="nombres" id="nombre_colaborador" readonly placeholder="Se llena automáticamente" />
 
-    <label>Agencia:</label>
-    <input type="text" name="agencia" id="agencia" readonly />
+    <label>Correo Electrónico:</label>
+    <input type="email" name="correo_colaborador" id="correo_colaborador" required placeholder="nombre@ramo.com.co"/>
 
-    <label>Teléfono del equipo:</label>
-    <input type="text" name="telefono" id="telefono" readonly />
-
-    <!-- NUEVO CAMPO: Nombre del Líder -->
-    <label>Nombre del Líder:</label>
-    <input type="text" name="lider" id="lider" required />
-
-    <label>Código SAP:</label>
-    <input type="text" name="codigo_sap" required />
-
-    <label>Estado del equipo:</label>
-    <select name="estado_equipo" required>
-      <option value="">Seleccione...</option>
-      <option value="Nuevo">Nuevo</option>
-      <option value="Bueno">Bueno</option>
-      <option value="Regular">Regular</option>
-      <option value="Malo">Malo</option>      
-    </select>
-
-    <label>Accesorios:</label>
-    <div class="accesorios-container">
-      <label><input type="checkbox" name="accesorios" value="Estuche" /> Estuche</label>
-      <label><input type="checkbox" name="accesorios" value="Batería" /> Batería</label>
-      <label><input type="checkbox" name="accesorios" value="Cargador" /> Cargador</label>
-      <label><input type="checkbox" name="accesorios" value="Cable" /> Cable</label>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <label>Agencia/Sede (Automático):</label>
+            <input type="text" name="agencia" id="agencia" readonly />
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label>Zona:</label>
+            <input type="text" name="zona_colaborador" id="zona_colaborador" required />
+        </div>
     </div>
 
-    <label>Estado batería:</label>
-    <input type="text" name="estado_bateria" required />
-
-    <label>Operación:</label>
-    <select name="operacion" required>
+    <label>Cargo / Operación:</label>
+    <select name="operacion" id="operacion" required>
       <option value="">Seleccione...</option>
       <option value="Gestor PV">Gestor PV</option>
       <option value="Preventa">Preventa</option>
       <option value="Canal Moderno">Canal Moderno</option>
       <option value="Logística">Logística</option>
       <option value="Eagle">Eagle</option>
+      <option value="Administrativo">Administrativo</option>
+      <option value="Agencia">Agencia</option>
+    </select>
+    
+    <!-- ========================================== -->
+    <!-- SECCIÓN 2: INVENTARIO Y ESTADO             -->
+    <!-- ========================================== -->
+    <h3 class="seccion-titulo">2. Inventario del Equipo</h3>
+
+    <label>Marca y Modelo del Dispositivo:</label>
+    <select name="marca_modelo" id="marca_modelo" required>
+        <option value="">Seleccione...</option>
+        <option value="Zebra TC26">Zebra TC26</option>
+        <option value="Zebra TC27">Zebra TC27</option>
+        <option value="Ulefone Armor X8">Ulefone Armor X8</option>
+        <option value="Ulefone Armor X8i">Ulefone Armor X8i</option>
+        <option value="Cyrus">Cyrus</option>
     </select>
 
-    <label>Observaciones:</label>
-    <textarea name="observaciones" rows="3"></textarea>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <label>Serial (IMEI/SN):</label>
+            <input type="text" id="serial" name="serial" required />
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label>Línea (Sim Card):</label>
+            <input type="text" name="telefono" id="telefono" placeholder="Número de línea" />
+        </div>
+    </div>
 
-    <label>Serial del equipo:</label>
-    <input type="text" id="serial" name="serial" readonly />
+    <p style="font-weight: bold; margin-top: 25px; color: #B70000;">Detalle de Accesorios:</p>
+    
+    <div class="tabla-container">
+        <table class="tabla-inventario">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Ítem</th>
+                    <th style="width: 30%;">¿Se entrega?</th>
+                    <th style="width: 30%;">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila 1: Terminal -->
+                <tr>
+                    <td>Terminal Móvil</td>
+                    <td>
+                        <label><input type="radio" name="entrega_terminal" value="Si" checked> Si</label>
+                        <label><input type="radio" name="entrega_terminal" value="No"> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_terminal">
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 2: Pantalla -->
+                <tr>
+                    <td>Pantalla</td>
+                    <td>
+                        <label><input type="radio" name="entrega_pantalla" value="Si" checked> Si</label>
+                        <label><input type="radio" name="entrega_pantalla" value="No"> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_pantalla">
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 3: Estuche -->
+                <tr>
+                    <td>Estuche</td>
+                    <td>
+                        <label><input type="radio" name="entrega_estuche" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_estuche" value="No" checked> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_estuche">
+                            <option value="N/A">N/A</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 4: Batería -->
+                <tr>
+                    <td>Batería</td>
+                    <td>
+                        <label><input type="radio" name="entrega_bateria" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_bateria" value="No" checked> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_bateria_item">
+                            <option value="N/A">N/A</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 5: Cargador -->
+                <tr>
+                    <td>Cargador</td>
+                    <td>
+                        <label><input type="radio" name="entrega_cargador" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_cargador" value="No" checked> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_cargador">
+                            <option value="N/A">N/A</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 6: Cable -->
+                <tr>
+                    <td>Cable USB</td>
+                    <td>
+                        <label><input type="radio" name="entrega_cable" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_cable" value="No" checked> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_cable">
+                            <option value="N/A">N/A</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+                <!-- Fila 7: Sim Card -->
+                <tr>
+                    <td>Sim Card</td>
+                    <td>
+                        <label><input type="radio" name="entrega_sim" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_sim" value="No" checked> No</label>
+                    </td>
+                    <td>
+                        <select name="estado_sim">
+                            <option value="N/A">N/A</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Malo">Malo</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <label>Firma digital (use el dedo o mouse):</label>
-    <canvas id="canvas" width="300" height="100"></canvas>
-    <button type="button" class="btn-secundario" onclick="limpiarFirma()">Limpiar firma</button>
+    <label>Observaciones Generales:</label>
+    <textarea name="observaciones" rows="3" placeholder="Describa daños o novedades..."></textarea>
 
-    <label style="margin-top: 15px;">
+    <!-- ========================================== -->
+    <!-- SECCIÓN 3: DATOS DEL ANALISTA              -->
+    <!-- ========================================== -->
+    <h3 class="seccion-titulo">3. Datos del Analista (Quien Entrega)</h3>
+    
+    <label>Cédula Analista:</label>
+    <div class="input-con-estado">
+        <input type="text" name="cedula_analista" id="cedula_analista" required placeholder="Ingrese para buscar" />
+        <button type="button" class="btn-secundario" onclick="buscarAnalista()">🔍 Buscar</button>
+        <span id="estado-busqueda-analista" class="estado-icono"></span>
+    </div>
+
+    <label>Nombre del Analista:</label>
+    <input type="text" name="nombre_analista" id="nombre_analista" readonly />
+
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <label>Código SAP:</label>
+            <input type="text" name="codigo_sap_analista" id="codigo_sap_analista" required />
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label>Cargo:</label>
+            <input type="text" name="cargo_analista" id="cargo_analista" required />
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <label>Agencia (Analista):</label>
+            <input type="text" name="agencia_analista" id="agencia_analista" readonly />
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label>Zona:</label>
+            <input type="text" name="zona_analista" id="zona_analista" required />
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN 4: FIRMAS                          -->
+    <!-- ========================================== -->
+    <h3 class="seccion-titulo">4. Firmas y Aceptación</h3>
+
+    <!-- Firma 1: Colaborador -->
+    <div class="firma-container">
+        <label style="color: #000; font-weight: bold;">Firma del Colaborador (Quien Recibe):</label>
+        <canvas id="canvas_colaborador" class="canvas-firma"></canvas>
+        <button type="button" class="btn-secundario" onclick="limpiarFirmaColaborador()">Borrar Firma</button>
+    </div>
+
+    <!-- Firma 2: Analista -->
+    <div class="firma-container">
+        <label style="color: #000; font-weight: bold;">Firma del Analista (Quien Entrega):</label>
+        <canvas id="canvas_analista" class="canvas-firma"></canvas>
+        <button type="button" class="btn-secundario" onclick="limpiarFirmaAnalista()">Borrar Firma</button>
+    </div>
+
+    <label style="margin-top: 15px; display: block;">
       <input type="checkbox" id="aceptaCondiciones" required />
-      He leído y acepto estas condiciones.
+      <div>
+        He leído y acepto las condiciones de uso, y certifico que la información del inventario es correcta.
+      </div>
     </label>
 
     <div id="spinner" class="spinner" style="display:none;"></div>
 
-    <button type="submit" class="btn-principal">Enviar</button>
+    <button type="submit" class="btn-principal">GENERAR ACTA DE ENTREGA</button>
     <p id="estado"></p>
   </form>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const hoy = new Date().toISOString().split("T")[0];
-      document.getElementById("fecha").value = hoy;
-    });
-  </script>
 
   <script src="script.js"></script>
 </body>
 </html>
-
