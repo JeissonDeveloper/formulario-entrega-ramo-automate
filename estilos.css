@@ -37,7 +37,7 @@ h2 {
 
 /* Formulario */
 form {
-  max-width: 620px;
+  max-width: 680px; /* Un poco más ancho para la tabla */
   margin: 30px auto;
   padding: 30px;
   background-color: #ffffff;
@@ -51,15 +51,32 @@ form {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- ESTILOS NUEVOS PARA V2 (Títulos de Sección) --- */
+.seccion-titulo {
+    background-color: #B70000;
+    color: white;
+    padding: 10px 15px;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 /* Etiquetas */
 label {
   display: block;
   margin-top: 15px;
   font-weight: 600;
+  font-size: 0.95em;
+  color: #444;
 }
 
 /* Inputs y selects */
 input[type="text"],
+input[type="email"],
+input[type="number"],
 select,
 textarea {
   width: 100%;
@@ -82,14 +99,54 @@ textarea:focus {
   transform: scale(1.01);
 }
 
-/* Textarea ajustable verticalmente */
+/* Inputs de solo lectura (Grisáceos) */
+input[readonly] {
+    background-color: #f9f9f9;
+    border-color: #e0e0e0;
+    color: #666;
+}
+
+/* Textarea */
 textarea {
   resize: vertical;
   min-height: 80px;
 }
 
-/* Canvas para la firma */
-#canvas {
+/* --- ESTILOS NUEVOS PARA TABLA DE INVENTARIO --- */
+.tabla-inventario {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.tabla-inventario th, .tabla-inventario td {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    text-align: center;
+}
+
+.tabla-inventario th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+
+.tabla-inventario tr:hover {
+    background-color: #fafafa;
+}
+
+/* Radios dentro de la tabla */
+.tabla-inventario label {
+    display: inline-block;
+    margin: 0 5px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+/* Canvas para la firma (Ahora genérico para usar 2 veces) */
+.canvas-firma {
   width: 100%;
   height: 150px;
   border: 2px dashed #ccc;
@@ -97,14 +154,23 @@ textarea {
   margin-top: 10px;
   border-radius: 6px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: crosshair;
 }
 
-#canvas:hover {
+.canvas-firma:hover {
   border-color: #B70000;
   box-shadow: 0 0 6px rgba(183, 0, 0, 0.1);
 }
 
-/* Botón principal */
+.firma-container {
+    background: #fcfcfc;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Botones */
 button {
   margin-top: 20px;
   padding: 12px 24px;
@@ -119,13 +185,31 @@ button {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+button.btn-secundario {
+    background-color: #666;
+    padding: 8px 16px;
+    font-size: 13px;
+    margin-top: 0; /* Ajuste para alineación */
+}
+
 button:hover {
   background-color: #940000;
   transform: scale(1.05);
 }
+button.btn-secundario:hover {
+    background-color: #444;
+}
 
 button:active {
   transform: scale(0.98);
+}
+
+/* Botón principal ancho */
+.btn-principal {
+    width: 100%;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Mensaje de estado */
@@ -143,7 +227,6 @@ button:active {
   padding: 10px;
   font-size: 15px;
   text-align: center;
-  transition: all 0.3s ease;
 }
 
 /* Loader tipo spinner */
@@ -164,45 +247,6 @@ button:active {
   to { transform: rotate(360deg); }
 }
 
-/* Estilo checkbox */
-input[type="checkbox"] {
-  margin-right: 8px;
-  transform: scale(1.1);
-  transition: transform 0.2s ease;
-}
-
-input[type="checkbox"]:checked {
-  transform: scale(1.2);
-}
-
-/* Contenedor de accesorios */
-.accesorios-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.accesorios-container label {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.accesorios-container input[type="checkbox"] {
-  margin-right: 8px;
-}
-
-.accesorios-container label:hover {
-  background-color: #e6e6e6;
-  border-color: #b70000;
-}
-
 /* Checkbox de condiciones */
 label[for="aceptaCondiciones"] {
   display: flex;
@@ -211,60 +255,22 @@ label[for="aceptaCondiciones"] {
   font-weight: normal;
   font-size: 14px;
 }
+input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
 
 /* Condiciones de uso */
 .condiciones-uso {
   margin-top: 30px;
-  font-size: 14px;
+  font-size: 13px;
   background-color: #fffafa;
-  border: 2px solid #e5bcbc;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08), inset 0 0 8px rgba(183, 0, 0, 0.04);
-  line-height: 1.6;
-  animation: slideIn 1s ease-in-out;
-  transition: all 0.3s ease;
-  max-width: 100%;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Separadores visuales */
-hr {
-  border: none;
-  height: 1px;
-  background-color: #ddd;
-  margin: 30px 0;
-}
-
-/* Animación para select */
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position-x: 98%;
-  background-position-y: 12px;
-  background-size: 14px;
-  cursor: pointer;
-}
-
-select:hover {
-  border-color: #B70000;
-}
-
-/* Estilo para date pickers */
-input[type="date"] {
-  cursor: pointer;
-}
-
-/* Animación sutil al pasar por cualquier input */
-input[type="text"]:hover,
-select:hover,
-textarea:hover {
-  background-color: #fcfcfc;
+  border: 1px solid #e5bcbc;
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.5;
+  color: #555;
+  text-align: justify;
 }
 
 /* NUEVO: contenedor para buscar con ícono */
@@ -300,15 +306,8 @@ textarea:hover {
 /* Responsive */
 @media (max-width: 600px) {
   form {
-    padding: 20px;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .accesorios-container {
-    flex-direction: column;
+    padding: 15px;
+    margin: 10px;
   }
 
   .input-con-estado {
@@ -316,14 +315,13 @@ textarea:hover {
     align-items: stretch;
   }
 
-  .input-con-estado input[type="text"],
-  .input-con-estado button,
-  .input-con-estado #estado-busqueda {
-    width: 100%;
+  .input-con-estado button {
+      margin-top: 5px;
+      width: 100%;
   }
-
-  #estado-busqueda {
-    margin-top: 10px;
-    text-align: center;
+  
+  /* Hacer la tabla scrolleable horizontalmente en móviles muy pequeños */
+  .tabla-container {
+      overflow-x: auto;
   }
 }
