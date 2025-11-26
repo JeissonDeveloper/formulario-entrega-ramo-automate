@@ -1,327 +1,282 @@
-/* Reset básico */
+/* --- RESET & BASE --- */
+* { box-sizing: border-box; }
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  background-color: #f4f6f8; /* Gris muy suave, empresarial */
   color: #333;
-  scroll-behavior: smooth;
 }
 
-/* Encabezado */
+.main-container {
+    max-width: 750px;
+    margin: 40px auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Sombra elegante */
+    overflow: hidden;
+    padding-bottom: 20px;
+}
+
+/* --- HEADER --- */
 header {
-  text-align: center;
-  padding: 20px;
-  background-color: white;
-  border-bottom: 1px solid #ddd;
-  animation: fadeInDown 1s ease-in-out;
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(to bottom, #fff, #fbfbfb);
+    border-bottom: 1px solid #eee;
 }
 
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+.logo {
+    max-width: 160px;
+    margin-bottom: 10px;
 }
 
-/* Título principal */
-h2 {
-  text-align: center;
-  margin-top: 20px;
-  color: #B70000;
-  animation: fadeIn 1.2s ease-in-out;
+h1 {
+    font-size: 1.5rem;
+    color: #B70000; /* Rojo Ramo */
+    margin: 0;
+    font-weight: 600;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --- CONDICIONES DE USO --- */
+.condiciones-uso {
+    background-color: #fff5f5; /* Rojo muy pálido */
+    border-left: 4px solid #B70000;
+    margin: 20px 30px;
+    padding: 20px;
+    font-size: 0.85rem;
+    color: #555;
+    border-radius: 0 8px 8px 0;
+    line-height: 1.5;
+    text-align: justify;
 }
+.condiciones-uso h3 { margin-top: 0; color: #B70000; font-size: 1rem; }
+.condiciones-uso p { margin-bottom: 8px; }
+.condiciones-uso p:last-child { margin-bottom: 0; }
 
-/* Formulario */
-form {
-  max-width: 680px; /* Un poco más ancho para la tabla */
-  margin: 30px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  animation: fadeInUp 1.2s ease-in-out;
-}
+/* --- FORMULARIO --- */
+form { padding: 0 30px 30px 30px; }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- ESTILOS NUEVOS PARA V2 (Títulos de Sección) --- */
-.seccion-titulo {
-    background-color: #B70000;
-    color: white;
+/* Headers de Sección */
+.seccion-header {
+    background-color: #333; /* Gris oscuro para contraste serio */
+    color: #fff;
     padding: 10px 15px;
-    margin-top: 35px;
+    margin-top: 30px;
     margin-bottom: 20px;
     border-radius: 6px;
-    font-size: 1.1em;
     font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
 }
 
-/* Etiquetas */
-label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
-  font-size: 0.95em;
-  color: #444;
-}
-
-/* Inputs y selects */
-input[type="text"],
-input[type="email"],
-input[type="number"],
-select,
-textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  box-sizing: border-box;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: #B70000;
-  box-shadow: 0 0 10px rgba(183, 0, 0, 0.25);
-  transform: scale(1.01);
-}
-
-/* Inputs de solo lectura (Grisáceos) */
-input[readonly] {
-    background-color: #f9f9f9;
-    border-color: #e0e0e0;
-    color: #666;
-}
-
-/* Textarea */
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* --- ESTILOS NUEVOS PARA TABLA DE INVENTARIO --- */
-.tabla-inventario {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    font-size: 0.9em;
-}
-
-.tabla-inventario th, .tabla-inventario td {
-    border: 1px solid #e0e0e0;
-    padding: 10px;
-    text-align: center;
-}
-
-.tabla-inventario th {
-    background-color: #f2f2f2;
-    color: #333;
+.seccion-header .numero {
+    background-color: #B70000;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 0.8rem;
     font-weight: bold;
 }
 
-.tabla-inventario tr:hover {
-    background-color: #fafafa;
+/* Grids para Layout (Columnas) */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+/* Labels e Inputs */
+label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #444;
 }
 
-/* Radios dentro de la tabla */
-.tabla-inventario label {
-    display: inline-block;
-    margin: 0 5px;
+input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #B70000;
+    box-shadow: 0 0 0 3px rgba(183, 0, 0, 0.1);
+}
+
+/* Campos Readonly (Grisáceos) */
+.input-readonly {
+    background-color: #f9f9f9;
+    border-color: #eee;
+    color: #666;
+    cursor: default;
+}
+
+/* Grupos de búsqueda */
+.input-group-search {
+    display: flex;
+    gap: 10px;
+}
+.btn-search {
+    background-color: #B70000;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+.btn-search:hover { background-color: #900000; }
+.msg-estado { font-size: 0.85rem; margin-top: 5px; min-height: 20px; font-weight: bold; }
+
+/* --- TABLA INVENTARIO --- */
+.tabla-titulo {
+    font-weight: bold;
+    color: #B70000;
+    margin-top: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+.tabla-container {
+    overflow-x: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.tabla-inventario {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tabla-inventario th {
+    background-color: #f8f8f8;
+    color: #333;
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-inventario td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tabla-inventario tr:last-child td { border-bottom: none; }
+
+/* Radio buttons bonitos en tabla */
+.radio-group { display: flex; justify-content: center; gap: 15px; }
+.radio-group label { margin: 0; font-weight: normal; cursor: pointer; }
+.radio-group input { width: auto; margin-right: 5px; }
+
+/* --- FIRMAS --- */
+.firmas-wrapper { margin-top: 10px; }
+
+.firma-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.firma-label { margin-top: 0; color: #B70000; }
+
+.canvas-firma {
+    width: 100%;
+    height: 120px;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: crosshair;
+    margin: 10px 0;
+    touch-action: none; /* Importante para que funcione en móviles */
+}
+.canvas-firma:active { border-color: #B70000; }
+
+.btn-clear {
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.btn-clear:hover { background: #eee; color: #333; }
+
+/* --- FOOTER & BOTON FINAL --- */
+.checkbox-legal {
+    margin: 30px 0;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+}
+.checkbox-legal label {
+    display: flex;
+    align-items: center;
     font-weight: normal;
+    font-size: 0.9rem;
+    margin: 0;
     cursor: pointer;
 }
+.checkbox-legal input { width: auto; margin-right: 15px; transform: scale(1.2); }
 
-/* Canvas para la firma (Ahora genérico para usar 2 veces) */
-.canvas-firma {
-  width: 100%;
-  height: 150px;
-  border: 2px dashed #ccc;
-  background-color: #fff;
-  margin-top: 10px;
-  border-radius: 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  cursor: crosshair;
-}
-
-.canvas-firma:hover {
-  border-color: #B70000;
-  box-shadow: 0 0 6px rgba(183, 0, 0, 0.1);
-}
-
-.firma-container {
-    background: #fcfcfc;
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-/* Botones */
-button {
-  margin-top: 20px;
-  padding: 12px 24px;
-  background-color: #B70000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-button.btn-secundario {
-    background-color: #666;
-    padding: 8px 16px;
-    font-size: 13px;
-    margin-top: 0; /* Ajuste para alineación */
-}
-
-button:hover {
-  background-color: #940000;
-  transform: scale(1.05);
-}
-button.btn-secundario:hover {
-    background-color: #444;
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-/* Botón principal ancho */
 .btn-principal {
     width: 100%;
-    font-size: 1.1em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Mensaje de estado */
-#estado {
-  margin-top: 15px;
-  font-weight: bold;
-  opacity: 0;
-  text-align: center;
-  transition: opacity 0.5s ease-in-out;
-}
-
-#estado.mostrar {
-  opacity: 1;
-  margin-top: 20px;
-  padding: 10px;
-  font-size: 15px;
-  text-align: center;
-}
-
-/* Loader tipo spinner */
-.spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #B70000;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: girar 1s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-@keyframes girar {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Checkbox de condiciones */
-label[for="aceptaCondiciones"] {
-  display: flex;
-  align-items: center;
-  margin-top: 25px;
-  font-weight: normal;
-  font-size: 14px;
-}
-input[type="checkbox"] {
-    margin-right: 10px;
-    transform: scale(1.2);
-}
-
-/* Condiciones de uso */
-.condiciones-uso {
-  margin-top: 30px;
-  font-size: 13px;
-  background-color: #fffafa;
-  border: 1px solid #e5bcbc;
-  padding: 15px;
-  border-radius: 8px;
-  line-height: 1.5;
-  color: #555;
-  text-align: justify;
-}
-
-/* NUEVO: contenedor para buscar con ícono */
-.input-con-estado {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.input-con-estado input[type="text"] {
-  flex: 1;
-}
-
-.estado-icono {
-  font-size: 20px;
-  min-width: 24px;
-  text-align: center;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Spinner pequeño para búsqueda */
-.spinner-busqueda {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #ccc;
-  border-top: 2px solid #B70000;
-  border-radius: 50%;
-  animation: girar 0.8s linear infinite;
-  display: inline-block;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  form {
     padding: 15px;
-    margin: 10px;
-  }
-
-  .input-con-estado {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .input-con-estado button {
-      margin-top: 5px;
-      width: 100%;
-  }
-  
-  /* Hacer la tabla scrolleable horizontalmente en móviles muy pequeños */
-  .tabla-container {
-      overflow-x: auto;
-  }
+    background-color: #B70000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.3s;
+    box-shadow: 0 4px 6px rgba(183,0,0,0.2);
 }
+.btn-principal:hover {
+    background-color: #900000;
+    transform: translateY(-2px);
+}
+
+/* Spinner de carga */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #B70000;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Ajustes Responsive (Móvil) */
+@media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 10px; }
+    form { padding: 0 15px 20px 15px; }
+    .condiciones-uso { margin: 15px; }
+    .input-group-search { flex-direction: column; }
+    .btn-search { width: 100%; padding: 10px; }
+}
+
