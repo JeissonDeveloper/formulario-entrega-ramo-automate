@@ -118,7 +118,6 @@
         <input type="email" id="correo_colaborador" required placeholder="nombre@ramo.com.co">
 
         <div class="grid-2">
-            <!-- NUEVO CAMPO: CÓDIGO SAP COLABORADOR -->
             <div><label>Código SAP Colaborador:</label><input type="text" id="codigo_sap" inputmode="numeric" required placeholder="Ej: 12345"></div>
             <div><label>Zona:</label><input type="text" id="zona_colaborador" required></div>
         </div>
@@ -170,7 +169,8 @@
         <div class="seccion-header" style="background:#B70000; margin-top:30px;"><span class="numero" style="background:#fff; color:#B70000;">✓</span> Estado de Accesorios</div>
         
         <div class="accesorios-grid">
-            <!-- Cards Accesorios -->
+            
+            <!-- TARJETA: TERMINAL -->
             <div class="accesorio-card">
                 <div class="acc-header">Terminal Móvil</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_terminal" value="Si" checked>Si</label><label><input type="radio" name="entrega_terminal" value="No">No</label></div></div>
@@ -178,6 +178,7 @@
                 <input type="text" id="obs_terminal" class="obs-item" placeholder="Observación...">
             </div>
 
+            <!-- TARJETA: PANTALLA -->
             <div class="accesorio-card">
                 <div class="acc-header">Pantalla</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_pantalla" value="Si" checked>Si</label><label><input type="radio" name="entrega_pantalla" value="No">No</label></div></div>
@@ -185,6 +186,7 @@
                 <input type="text" id="obs_pantalla" class="obs-item" placeholder="Observación...">
             </div>
 
+            <!-- TARJETA: ESTUCHE -->
             <div class="accesorio-card">
                 <div class="acc-header">Estuche</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_estuche" value="Si">Si</label><label><input type="radio" name="entrega_estuche" value="No" checked>No</label></div></div>
@@ -192,6 +194,7 @@
                 <input type="text" id="obs_estuche" class="obs-item" placeholder="Observación...">
             </div>
 
+            <!-- TARJETA: BATERIA -->
             <div class="accesorio-card">
                 <div class="acc-header">Batería</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_bateria" value="Si">Si</label><label><input type="radio" name="entrega_bateria" value="No" checked>No</label></div></div>
@@ -199,6 +202,7 @@
                 <input type="text" id="obs_bateria" class="obs-item" placeholder="Observación...">
             </div>
 
+            <!-- TARJETA: CARGADOR -->
             <div class="accesorio-card">
                 <div class="acc-header">Cargador</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_cargador" value="Si">Si</label><label><input type="radio" name="entrega_cargador" value="No" checked>No</label></div></div>
@@ -206,17 +210,26 @@
                 <input type="text" id="obs_cargador" class="obs-item" placeholder="Observación...">
             </div>
 
+            <!-- TARJETA: CABLE -->
             <div class="accesorio-card">
                 <div class="acc-header">Cable USB</div>
                 <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_cable" value="Si">Si</label><label><input type="radio" name="entrega_cable" value="No" checked>No</label></div></div>
                 <div class="acc-row"><span class="acc-label">Estado:</span><select name="estado_cable"><option value="N/A">N/A</option><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
                 <input type="text" id="obs_cable" class="obs-item" placeholder="Observación...">
             </div>
+
+            <!-- TARJETA: SIM CARD (NUEVA) -->
+            <div class="accesorio-card">
+                <div class="acc-header">Sim Card</div>
+                <div class="acc-row"><span class="acc-label">¿Entrega?</span><div class="radio-group-mobile"><label><input type="radio" name="entrega_sim" value="Si">Si</label><label><input type="radio" name="entrega_sim" value="No" checked>No</label></div></div>
+                <div class="acc-row"><span class="acc-label">Estado:</span><select name="estado_sim"><option value="N/A">N/A</option><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
+                <input type="text" id="obs_sim" class="obs-item" placeholder="Observación...">
+            </div>
+
         </div>
 
-        <!-- NUEVO CAMPO: ACCESORIOS -->
-        <label style="margin-top:20px;">Accesorios entregados (Escriba aquí):</label>
-        <textarea id="accesorios" rows="2" placeholder="Ej: Estuche, Cargador, Terminal..."></textarea>
+        <label style="margin-top:20px;">Otros Accesorios (Escriba aquí):</label>
+        <textarea id="accesorios_adicionales" rows="2" placeholder="Ej: Vidrio templado, Funda especial, Correa..."></textarea>
 
         <label style="margin-top:15px;">Observaciones Generales:</label>
         <textarea id="observaciones" rows="3" placeholder="Comentarios generales de la entrega..."></textarea>
@@ -289,14 +302,11 @@
     // Búsqueda
     async function realizarBusqueda(cedula, tipo) {
         if(!cedula) { alert("Escribe una cédula primero"); return; }
-        
         const sufijo = tipo === 'colab' ? 'colaborador' : 'analista';
         const icono = document.getElementById("icono-busqueda-" + sufijo);
         const msg = document.getElementById("msg-" + sufijo);
         
-        icono.innerHTML = '<span class="spinner"></span>'; 
-        msg.innerText = "Conectando...";
-        msg.style.color = "#666";
+        icono.innerHTML = '<span class="spinner"></span>'; msg.innerText = "Conectando..."; msg.style.color = "#666";
 
         try {
             const resp = await fetch(URL_BUSQUEDA, {
@@ -304,12 +314,10 @@
                 body: JSON.stringify({ cedula: cedula })
             });
             const data = await resp.json();
-
             icono.innerHTML = "🔍";
 
             if (data && data.nombre_colaborador) {
-                msg.innerText = "✅ Datos cargados";
-                msg.style.color = "green";
+                msg.innerText = "✅ Datos cargados"; msg.style.color = "green";
                 if(tipo === 'colab') {
                     document.getElementById("nombre_colaborador").value = data.nombre_colaborador;
                     document.getElementById("agencia").value = data.agencia || "";
@@ -320,14 +328,10 @@
                     document.getElementById("telefono_analista").value = data.telefono || "";
                 }
             } else {
-                msg.innerText = "❌ Cédula no encontrada";
-                msg.style.color = "red";
+                msg.innerText = "❌ Cédula no encontrada"; msg.style.color = "red";
             }
         } catch (err) {
-            console.error(err);
-            icono.innerHTML = "🔍";
-            msg.innerText = "❌ Error de conexión";
-            msg.style.color = "red";
+            console.error(err); icono.innerHTML = "🔍"; msg.innerText = "❌ Error de conexión"; msg.style.color = "red";
         }
     }
 
@@ -349,8 +353,7 @@
             const {left, top} = c.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - left;
             const y = (e.clientY || e.touches[0].clientY) - top;
-            ctx.moveTo(x, y);
-            e.preventDefault();
+            ctx.moveTo(x, y); e.preventDefault();
         };
         const move = (e) => {
             if(!drawing) return;
@@ -358,8 +361,7 @@
             const x = (e.clientX || e.touches[0].clientX) - left;
             const y = (e.clientY || e.touches[0].clientY) - top;
             ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
-            ctx.lineTo(x, y); ctx.stroke();
-            e.preventDefault();
+            ctx.lineTo(x, y); ctx.stroke(); e.preventDefault();
         };
         const end = () => { drawing = false; };
 
@@ -367,7 +369,6 @@
         c.addEventListener("mousemove", move); c.addEventListener("touchmove", move, {passive:false});
         c.addEventListener("mouseup", end); c.addEventListener("touchend", end);
         c.addEventListener("mouseout", end);
-
         return {c, ctx};
     }
 
@@ -385,10 +386,7 @@
         const estadoDiv = document.getElementById("estado-envio");
         estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Generando...';
 
-        const valRadio = (name) => {
-            const el = document.querySelector(`input[name="${name}"]:checked`);
-            return el ? el.value : "No";
-        };
+        const valRadio = (name) => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : "No"; };
         const valSelect = (name) => document.querySelector(`[name="${name}"]`).value;
         const valInput = (id) => document.getElementById(id).value;
 
@@ -398,7 +396,7 @@
             agencia: valInput("agencia"),
             telefono: valInput("telefono"),
             correo_colaborador: valInput("correo_colaborador"),
-            codigo_sap: valInput("codigo_sap"), // NUEVO CAMPO
+            codigo_sap: valInput("codigo_sap"),
             zona_colaborador: valInput("zona_colaborador"),
             operacion: valInput("operacion"),
             ciudad: valInput("ciudad"),
@@ -415,8 +413,9 @@
             entrega_bateria: valRadio("entrega_bateria"),   estado_bateria: valSelect("estado_bateria_item"), obs_bateria: valInput("obs_bateria"),
             entrega_cargador: valRadio("entrega_cargador"), estado_cargador: valSelect("estado_cargador"), obs_cargador: valInput("obs_cargador"),
             entrega_cable: valRadio("entrega_cable"),       estado_cable: valSelect("estado_cable"),       obs_cable: valInput("obs_cable"),
+            entrega_sim: valRadio("entrega_sim"),           estado_sim: valSelect("estado_sim"),           obs_sim: valInput("obs_sim"),
 
-            accesorios_adicionales: valInput("accesorios"), // NUEVO CAMPO
+            accesorios_adicionales: valInput("accesorios_adicionales"),
             observaciones: valInput("observaciones"),
 
             cedula_analista: valInput("cedula_analista"),
@@ -455,7 +454,7 @@
     document.getElementById("cedula").addEventListener("input", soloNumeros);
     document.getElementById("cedula_analista").addEventListener("input", soloNumeros);
     document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
-    document.getElementById("codigo_sap").addEventListener("input", soloNumeros); // Validación para el nuevo campo
+    document.getElementById("codigo_sap").addEventListener("input", soloNumeros);
 </script>
 
 </body>
