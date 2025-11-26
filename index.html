@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Acta de Entrega - RAMO (V2.2)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Acta de Entrega - RAMO</title>
   
   <style>
-    /* --- ESTILOS CSS --- */
+    /* --- ESTILOS GENERALES --- */
     * { box-sizing: border-box; }
 
     body, html {
@@ -18,63 +18,74 @@
     }
 
     .main-container {
-        max-width: 750px;
-        margin: 30px auto;
+        max-width: 800px;
+        margin: 20px auto;
         background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border-radius: 8px; /* Bordes un poco menos redondeados para look más serio */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         overflow: hidden;
         padding-bottom: 30px;
     }
 
+    /* HEADER */
     header {
         text-align: center;
-        padding: 25px;
-        border-bottom: 1px solid #eee;
+        padding: 20px;
         background: #fff;
+        border-bottom: 2px solid #B70000; /* Línea roja Ramo */
     }
 
-    .logo { max-width: 150px; margin-bottom: 10px; }
+    .logo { 
+        max-width: 180px; 
+        margin-bottom: 10px; 
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
     h1 {
-        font-size: 1.4rem;
-        color: #B70000; /* Rojo Ramo */
+        font-size: 1.3rem;
+        color: #B70000;
         margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 
-    /* Condiciones */
+    /* CONDICIONES */
     .condiciones-uso {
-        background-color: #fff5f5;
-        border-left: 5px solid #B70000;
-        margin: 20px 30px;
+        background-color: #fffbfb;
+        border: 1px solid #eecaca;
+        margin: 15px 20px;
         padding: 15px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: #555;
-        line-height: 1.5;
+        line-height: 1.4;
         text-align: justify;
+        border-radius: 6px;
     }
-    .condiciones-uso h3 { margin-top: 0; color: #B70000; }
-    .condiciones-uso p { margin-bottom: 8px; }
+    .condiciones-uso h3 { margin-top: 0; color: #B70000; font-size: 0.9rem; }
+    .condiciones-uso p { margin-bottom: 6px; }
 
-    /* Formulario */
-    form { padding: 0 30px; }
+    /* FORMULARIO */
+    form { padding: 0 20px; }
 
     .seccion-header {
         background-color: #333;
         color: #fff;
-        padding: 10px 15px;
-        margin-top: 30px;
-        margin-bottom: 20px;
-        border-radius: 6px;
+        padding: 10px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        border-radius: 4px;
         font-weight: 600;
         display: flex;
         align-items: center;
+        font-size: 0.95rem;
     }
     .seccion-header .numero {
         background-color: #B70000;
         color: white;
-        width: 25px;
-        height: 25px;
+        width: 22px;
+        height: 22px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -83,15 +94,16 @@
         font-size: 0.8rem;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    /* GRIDS & LAYOUT */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
 
     label {
         display: block;
-        margin-top: 15px;
-        margin-bottom: 5px;
+        margin-top: 12px;
+        margin-bottom: 4px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: #444;
     }
 
@@ -99,108 +111,163 @@
         width: 100%;
         padding: 10px;
         border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 0.95rem;
+        border-radius: 4px;
+        font-size: 1rem; /* Letra grande para móvil */
+        background-color: #fff;
     }
     
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
         border-color: #B70000;
         outline: none;
+        box-shadow: 0 0 0 2px rgba(183,0,0,0.1);
     }
 
     .input-readonly {
-        background-color: #f9f9f9;
+        background-color: #f2f2f2;
         color: #666;
-        cursor: not-allowed;
+        border-color: #e0e0e0;
+        pointer-events: none; /* Evita que el teclado se abra en móvil */
     }
 
-    /* Buscador */
-    .input-group-search {
-        display: flex;
-        gap: 10px;
-    }
+    /* BUSCADOR */
+    .input-group-search { display: flex; gap: 8px; }
     .btn-search {
         background-color: #B70000;
         color: white;
         border: none;
-        padding: 0 20px;
-        border-radius: 6px;
-        cursor: pointer;
+        padding: 0 15px;
+        border-radius: 4px;
         font-weight: bold;
         display: flex;
         align-items: center;
-        gap: 5px;
+        justify-content: center;
+        cursor: pointer;
     }
-    .btn-search:hover { background-color: #900000; }
+    .msg-estado { margin-top: 5px; font-size: 0.85rem; font-weight: bold; min-height: 20px;}
+
+    /* --- NUEVO ESTILO DE ACCESORIOS (TARJETAS MÓVILES) --- */
+    .accesorios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adaptable */
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .accesorio-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+    }
     
-    /* Estado de búsqueda */
-    .msg-estado {
-        margin-top: 5px;
-        font-size: 0.9rem;
-        min-height: 20px;
+    .accesorio-card:hover { border-color: #B70000; }
+
+    .acc-header {
         font-weight: bold;
+        color: #B70000;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    /* Tabla Inventario */
-    .tabla-container { overflow-x: auto; margin-bottom: 20px; }
-    .tabla-inventario { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 10px; }
-    .tabla-inventario th { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
-    .tabla-inventario td { padding: 8px; border: 1px solid #ddd; text-align: center; }
-    
-    .radio-group { display: flex; justify-content: center; gap: 15px; }
-    .radio-group label { font-weight: normal; margin: 0; cursor: pointer; }
-    .radio-group input { width: auto; margin-right: 5px; }
+    .acc-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
 
-    /* Firmas */
+    .acc-label { font-size: 0.85rem; color: #555; }
+    
+    /* Radio Buttons Grandes para Dedo */
+    .radio-group-mobile {
+        display: flex;
+        gap: 15px;
+    }
+    .radio-group-mobile label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        margin: 0;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    .radio-group-mobile input {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        accent-color: #B70000;
+    }
+
+    .obs-item {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        padding: 8px;
+        border: 1px solid #eee;
+        background: #fafafa;
+    }
+
+    /* FIRMAS */
+    .firmas-wrapper { margin-top: 15px; }
     .firma-card {
         border: 1px solid #ddd;
         padding: 10px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 6px;
+        background: #fafafa;
     }
     .canvas-firma {
         border: 2px dashed #ccc;
         background: #fff;
         width: 100%;
-        height: 120px;
+        height: 140px; /* Más alto para firmar cómodo */
         touch-action: none;
+        border-radius: 4px;
     }
     .btn-clear {
-        background: #eee; border: none; padding: 5px 10px;
-        border-radius: 4px; cursor: pointer; margin-top: 5px;
+        background: #fff; border: 1px solid #ccc; 
+        padding: 6px 12px; border-radius: 4px; 
+        margin-top: 8px; font-size: 0.8rem;
     }
 
-    /* Botón Final */
+    /* BOTON FINAL */
     .btn-principal {
         width: 100%;
-        padding: 15px;
+        padding: 16px;
         background-color: #B70000;
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 6px;
         font-size: 1.1rem;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 20px;
+        margin-top: 25px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 6px rgba(183,0,0,0.2);
     }
-    .btn-principal:hover { background-color: #900000; }
+    .btn-principal:active { transform: scale(0.98); }
 
-    /* Spinner Animado */
     .spinner {
-        display: inline-block;
-        width: 16px; 
-        height: 16px; 
+        display: inline-block; width: 16px; height: 16px; 
         border: 3px solid rgba(255,255,255,0.3); 
-        border-radius: 50%; 
-        border-top-color: #fff; /* Blanco para ver sobre rojo */
-        animation: spin 1s ease-in-out infinite;
+        border-radius: 50%; border-top-color: #fff; 
+        animation: spin 1s ease-in-out infinite; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* RESPONSIVE MÓVIL */
     @media (max-width: 600px) {
+        .main-container { margin: 0; border-radius: 0; box-shadow: none; }
         .grid-2, .grid-3 { grid-template-columns: 1fr; }
         .input-group-search { flex-direction: column; }
-        .btn-search { width: 100%; justify-content: center; padding: 10px; }
+        .btn-search { width: 100%; padding: 12px; }
+        .accesorios-grid { grid-template-columns: 1fr; } /* Una columna de tarjetas */
     }
   </style>
 </head>
@@ -208,8 +275,8 @@
 
 <div class="main-container">
     <header>
-        <!-- Si no tienes el logo local, usa este enlace temporal o pon tu archivo -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Ramo_logo.svg/1200px-Ramo_logo.svg.png" alt="Logo RAMO" class="logo" style="max-width: 120px;" />
+        <!-- LOGO ARREGLADO -->
+        <img src="logo-ramo.png" alt="Logo RAMO" class="logo" />
         <h1>Acta de Entrega de Dispositivos Móviles</h1>
     </header>
 
@@ -225,7 +292,7 @@
     <form id="formulario">
         
         <!-- 1. COLABORADOR -->
-        <div class="seccion-header"><span class="numero">1</span> Datos del Colaborador</div>
+        <div class="seccion-header"><span class="numero">1</span> Datos del Colaborador (Recibe)</div>
 
         <div class="grid-2">
             <div><label>Ciudad:</label><input type="text" id="ciudad" required placeholder="Ej: Bogotá"></div>
@@ -234,14 +301,14 @@
 
         <label>Cédula Colaborador:</label>
         <div class="input-group-search">
-            <input type="text" id="cedula" required placeholder="Ingrese cédula sin puntos">
+            <input type="text" id="cedula" inputmode="numeric" required placeholder="Sin puntos">
             <button type="button" class="btn-search" onclick="buscarColaborador()">
                 <span id="icono-busqueda-colaborador">🔍</span> Buscar
             </button>
         </div>
         <div id="msg-colaborador" class="msg-estado"></div>
 
-        <label>Nombre:</label><input type="text" id="nombre_colaborador" readonly class="input-readonly">
+        <label>Nombre Completo:</label><input type="text" id="nombre_colaborador" readonly class="input-readonly">
         
         <div class="grid-2">
             <div><label>Agencia:</label><input type="text" id="agencia" readonly class="input-readonly"></div>
@@ -290,7 +357,9 @@
                     <option value="TC26">TC26</option>
                     <option value="TC27">TC27</option>
                     <option value="Armor X8">Armor X8</option>
+                    <option value="Armor X8i">Armor X8i</option>
                     <option value="J5">J5</option>
+                    <option value="Otro">Otro</option>
                 </select>
             </div>
         </div>
@@ -298,36 +367,153 @@
         <label>Serial (IMEI/SN):</label>
         <input type="text" id="serial" required placeholder="Escanee o digite">
 
-        <p style="font-weight:bold; color:#B70000; margin-top:20px;">Estado de Accesorios:</p>
-        <div class="tabla-container">
-            <table class="tabla-inventario">
-                <thead><tr><th>Ítem</th><th>¿Se entrega?</th><th>Estado</th></tr></thead>
-                <tbody>
-                    <!-- Filas simplificadas para el ejemplo, agrega el resto si necesitas -->
-                    <tr>
-                        <td>Terminal Móvil</td>
-                        <td><div class="radio-group"><label><input type="radio" name="entrega_terminal" value="Si" checked> Si</label><label><input type="radio" name="entrega_terminal" value="No"> No</label></div></td>
-                        <td><select name="estado_terminal"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></td>
-                    </tr>
-                    <tr>
-                        <td>Cargador</td>
-                        <td><div class="radio-group"><label><input type="radio" name="entrega_cargador" value="Si"> Si</label><label><input type="radio" name="entrega_cargador" value="No" checked> No</label></div></td>
-                        <td><select name="estado_cargador"><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></td>
-                    </tr>
-                    <!-- Agrega aquí el resto de filas (Batería, Cable, etc.) copiando la estructura -->
-                </tbody>
-            </table>
-        </div>
+        <!-- AQUI ESTÁ EL CAMBIO IMPORTANTE: TARJETAS EN VEZ DE TABLA -->
+        <div class="seccion-header" style="background:#B70000; margin-top:30px;"><span class="numero" style="background:#fff; color:#B70000;">✓</span> Estado de Accesorios</div>
+        
+        <div class="accesorios-grid">
+            
+            <!-- TARJETA 1: TERMINAL -->
+            <div class="accesorio-card">
+                <div class="acc-header">Terminal Móvil</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_terminal" value="Si" checked> Si</label>
+                        <label><input type="radio" name="entrega_terminal" value="No"> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_terminal">
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_terminal" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
 
-        <label>Observaciones:</label>
-        <textarea id="observaciones" rows="3"></textarea>
+            <!-- TARJETA 2: PANTALLA -->
+            <div class="accesorio-card">
+                <div class="acc-header">Pantalla</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_pantalla" value="Si" checked> Si</label>
+                        <label><input type="radio" name="entrega_pantalla" value="No"> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_pantalla">
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_pantalla" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
+
+            <!-- TARJETA 3: ESTUCHE -->
+            <div class="accesorio-card">
+                <div class="acc-header">Estuche</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_estuche" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_estuche" value="No" checked> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_estuche">
+                        <option value="N/A">N/A</option>
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_estuche" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
+
+            <!-- TARJETA 4: BATERIA -->
+            <div class="accesorio-card">
+                <div class="acc-header">Batería</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_bateria" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_bateria" value="No" checked> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_bateria_item">
+                        <option value="N/A">N/A</option>
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_bateria" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
+
+            <!-- TARJETA 5: CARGADOR -->
+            <div class="accesorio-card">
+                <div class="acc-header">Cargador (Cabezote)</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_cargador" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_cargador" value="No" checked> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_cargador">
+                        <option value="N/A">N/A</option>
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_cargador" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
+
+            <!-- TARJETA 6: CABLE -->
+            <div class="accesorio-card">
+                <div class="acc-header">Cable USB</div>
+                <div class="acc-row">
+                    <span class="acc-label">¿Se entrega?</span>
+                    <div class="radio-group-mobile">
+                        <label><input type="radio" name="entrega_cable" value="Si"> Si</label>
+                        <label><input type="radio" name="entrega_cable" value="No" checked> No</label>
+                    </div>
+                </div>
+                <div class="acc-row">
+                    <span class="acc-label" style="width:60px;">Estado:</span>
+                    <select name="estado_cable">
+                        <option value="N/A">N/A</option>
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                    </select>
+                </div>
+                <input type="text" id="obs_cable" class="obs-item" placeholder="Observación específica (opcional)">
+            </div>
+
+        </div>
+        <!-- FIN DE TARJETAS ACCESORIOS -->
+
+        <label style="margin-top:25px;">Observaciones Generales:</label>
+        <textarea id="observaciones" rows="3" placeholder="Comentarios generales de la entrega..."></textarea>
 
         <!-- 3. ANALISTA -->
-        <div class="seccion-header"><span class="numero">3</span> Datos del Analista (Quien Entrega)</div>
+        <div class="seccion-header"><span class="numero">3</span> Datos del Analista (Entrega)</div>
 
         <label>Cédula Analista:</label>
         <div class="input-group-search">
-            <input type="text" id="cedula_analista" required placeholder="Ingrese cédula sin puntos">
+            <input type="text" id="cedula_analista" inputmode="numeric" required placeholder="Sin puntos">
             <button type="button" class="btn-search" onclick="buscarAnalista()">
                 <span id="icono-busqueda-analista">🔍</span> Buscar
             </button>
@@ -349,28 +535,28 @@
 
         <!-- 4. FIRMAS -->
         <div class="seccion-header"><span class="numero">4</span> Firmas</div>
-        <div class="grid-2">
+        <div class="grid-2 firmas-wrapper">
             <div class="firma-card">
                 <label>Colaborador (Recibe)</label>
                 <canvas id="canvas_colaborador" class="canvas-firma"></canvas>
-                <button type="button" class="btn-clear" onclick="limpiarFirma('colab')">Limpiar</button>
+                <button type="button" class="btn-clear" onclick="limpiarFirma('colab')">Borrar Firma</button>
             </div>
             <div class="firma-card">
                 <label>Analista (Entrega)</label>
                 <canvas id="canvas_analista" class="canvas-firma"></canvas>
-                <button type="button" class="btn-clear" onclick="limpiarFirma('ana')">Limpiar</button>
+                <button type="button" class="btn-clear" onclick="limpiarFirma('ana')">Borrar Firma</button>
             </div>
         </div>
 
-        <div style="margin-top:20px; background:#f9f9f9; padding:10px;">
+        <div style="margin-top:20px; background:#f0f0f0; padding:15px; border-radius:6px;">
             <label style="display:flex; align-items:center;">
-                <input type="checkbox" id="aceptaCondiciones" required style="width:auto; margin-right:10px;">
-                Acepto términos y condiciones.
+                <input type="checkbox" id="aceptaCondiciones" required style="width:20px; height:20px; margin-right:15px; margin-top:0;">
+                <span>Certifico que la información es correcta y acepto las condiciones.</span>
             </label>
         </div>
 
         <button type="submit" class="btn-principal">GENERAR ACTA</button>
-        <div id="estado-envio" style="text-align:center; margin-top:10px; font-weight:bold;"></div>
+        <div id="estado-envio" style="text-align:center; margin-top:15px; font-weight:bold; font-size:1.1rem;"></div>
 
     </form>
 </div>
@@ -392,14 +578,12 @@
     async function realizarBusqueda(cedula, tipo) {
         if(!cedula) { alert("Escribe una cédula primero"); return; }
         
-        // Referencias DOM
         const sufijo = tipo === 'colab' ? 'colaborador' : 'analista';
         const icono = document.getElementById("icono-busqueda-" + sufijo);
         const msg = document.getElementById("msg-" + sufijo);
         
-        // Estado visual: Cargando
         icono.innerHTML = '<span class="spinner"></span>'; 
-        msg.innerText = "Conectando con base de datos...";
+        msg.innerText = "Conectando...";
         msg.style.color = "#666";
 
         try {
@@ -409,14 +593,12 @@
             });
             const data = await resp.json();
 
-            // Restaurar icono
             icono.innerHTML = "🔍";
 
             if (data && data.nombre_colaborador) {
-                msg.innerText = "✅ Datos cargados correctamente";
+                msg.innerText = "✅ Datos cargados";
                 msg.style.color = "green";
                 
-                // Llenar campos
                 if(tipo === 'colab') {
                     document.getElementById("nombre_colaborador").value = data.nombre_colaborador;
                     document.getElementById("agencia").value = data.agencia || "";
@@ -427,18 +609,17 @@
                     document.getElementById("telefono_analista").value = data.telefono || "";
                 }
             } else {
-                msg.innerText = "❌ Cédula no encontrada en el sistema";
+                msg.innerText = "❌ Cédula no encontrada";
                 msg.style.color = "red";
             }
         } catch (err) {
             console.error(err);
             icono.innerHTML = "🔍";
-            msg.innerText = "❌ Error de conexión (Revisar consola)";
+            msg.innerText = "❌ Error de conexión";
             msg.style.color = "red";
         }
     }
 
-    // Funciones puente para los botones HTML
     window.buscarColaborador = () => realizarBusqueda(document.getElementById("cedula").value, 'colab');
     window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_analista").value, 'analista');
 
@@ -448,23 +629,24 @@
         const ctx = c.getContext("2d");
         let drawing = false;
         
-        const resize = () => { c.width = c.offsetWidth; c.height = 120; };
-        resize(); // Init
+        const resize = () => { c.width = c.offsetWidth; c.height = 140; };
+        resize();
+        window.addEventListener('resize', resize);
 
         const start = (e) => {
             drawing = true; ctx.beginPath();
             const {left, top} = c.getBoundingClientRect();
-            // Soporte mouse/touch
             const x = (e.clientX || e.touches[0].clientX) - left;
             const y = (e.clientY || e.touches[0].clientY) - top;
             ctx.moveTo(x, y);
-            e.preventDefault(); // Prevenir scroll en movil
+            e.preventDefault();
         };
         const move = (e) => {
             if(!drawing) return;
             const {left, top} = c.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - left;
             const y = (e.clientY || e.touches[0].clientY) - top;
+            ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
             ctx.lineTo(x, y); ctx.stroke();
             e.preventDefault();
         };
@@ -490,20 +672,51 @@
     document.getElementById("formulario").addEventListener("submit", async (e) => {
         e.preventDefault();
         const estadoDiv = document.getElementById("estado-envio");
-        estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Enviando Acta...';
+        estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Generando...';
 
-        // Recolectar datos (Resumido)
+        const valRadio = (name) => {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : "No";
+        };
+        const valSelect = (name) => document.querySelector(`[name="${name}"]`).value;
+        const valInput = (id) => document.getElementById(id).value;
+
         const data = {
-            cedula: document.getElementById("cedula").value,
-            nombre_colaborador: document.getElementById("nombre_colaborador").value,
-            // ... resto de campos ...
+            cedula: valInput("cedula"),
+            nombre_colaborador: valInput("nombre_colaborador"),
+            agencia: valInput("agencia"),
+            telefono: valInput("telefono"),
+            correo_colaborador: valInput("correo_colaborador"),
+            zona_colaborador: valInput("zona_colaborador"),
+            operacion: valInput("operacion"),
+            ciudad_fecha: valInput("ciudad") + " - " + valInput("fecha"),
+
+            tipo_equipo: "Handheld",
+            marca: valInput("marca"),
+            modelo: valInput("modelo"),
+            serial: valInput("serial"),
+
+            // DATOS DE ACCESORIOS (Incluyendo las nuevas observaciones)
+            entrega_terminal: valRadio("entrega_terminal"), estado_terminal: valSelect("estado_terminal"), obs_terminal: valInput("obs_terminal"),
+            entrega_pantalla: valRadio("entrega_pantalla"), estado_pantalla: valSelect("estado_pantalla"), obs_pantalla: valInput("obs_pantalla"),
+            entrega_estuche: valRadio("entrega_estuche"),   estado_estuche: valSelect("estado_estuche"),   obs_estuche: valInput("obs_estuche"),
+            entrega_bateria: valRadio("entrega_bateria"),   estado_bateria: valSelect("estado_bateria_item"), obs_bateria: valInput("obs_bateria"),
+            entrega_cargador: valRadio("entrega_cargador"), estado_cargador: valSelect("estado_cargador"), obs_cargador: valInput("obs_cargador"),
+            entrega_cable: valRadio("entrega_cable"),       estado_cable: valSelect("estado_cable"),       obs_cable: valInput("obs_cable"),
+
+            observaciones: valInput("observaciones"), // Observación General
+
+            cedula_analista: valInput("cedula_analista"),
+            nombre_analista: valInput("nombre_analista"),
+            agencia_analista: valInput("agencia_analista"),
+            telefono_analista: valInput("telefono_analista"),
+            codigo_sap_analista: valInput("codigo_sap_analista"),
+            cargo_analista: valInput("cargo_analista"),
+            zona_analista: valInput("zona_analista"),
+
             firma_colaborador: sigColab.c.toDataURL().split(",")[1],
             firma_analista: sigAna.c.toDataURL().split(",")[1]
-            // NOTA: Aquí irían todos los campos del JSON completo que te pasé antes
         };
-        
-        // Simulación de envío para que veas el spinner (Descomenta el fetch real abajo)
-        // await new Promise(r => setTimeout(r, 2000)); 
         
         try {
             const resp = await fetch(URL_ENVIO, {
@@ -515,14 +728,21 @@
                 estadoDiv.style.color = "green";
                 document.getElementById("formulario").reset();
                 limpiarFirma('colab'); limpiarFirma('ana');
+                document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
             } else {
                 throw new Error("Error API");
             }
         } catch(err) {
-            estadoDiv.innerText = "❌ Error al enviar datos (Verificar Power Automate)";
+            estadoDiv.innerText = "❌ Error al enviar (Verificar Flujo)";
             estadoDiv.style.color = "red";
         }
     });
+
+    // Validar solo números
+    const soloNumeros = e => e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    document.getElementById("cedula").addEventListener("input", soloNumeros);
+    document.getElementById("cedula_analista").addEventListener("input", soloNumeros);
+    document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
 </script>
 
 </body>
