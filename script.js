@@ -1,291 +1,223 @@
-// script.js - Versión 2.0 (Doble Búsqueda y Doble Firma)
+// script.js - Versión 2.1 (Ajuste Ramo Final)
 
 const formulario = document.getElementById("formulario");
-const estado = document.getElementById("estado");
+const divEstadoEnvio = document.getElementById("estado-envio");
 
-// --- 1. CONFIGURACIÓN DE FIRMAS (DOBLE CANVAS) ---
-function iniciarPadFirma(canvasId) {
+// URLS DE POWER AUTOMATE (Verifica que sean las correctas)
+// URL para BUSCAR usuario (GET/POST datos)
+const URL_BUSQUEDA = "https://prod-29.westus.logic.azure.com:443/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HdukGAnPtKgdUMkC1kbIqxd6pRyp_oZ_Q35IAtZGr-M";
+// URL para ENVIAR el acta final
+const URL_ENVIO = "https://prod-47.westus.logic.azure.com:443/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eYvcvi9mTH8wpW3_QaYhkhae6jiMGh4C38LaL1eEAZI";
+
+// --- 1. CONFIGURACIÓN INICIAL AL CARGAR ---
+document.addEventListener("DOMContentLoaded", () => {
+    // Fecha automática
+    const hoy = new Date().toISOString().split("T")[0];
+    document.getElementById("fecha").value = hoy;
+    
+    // Serial desde URL (si aplica)
+    const params = new URLSearchParams(window.location.search);
+    const serial = params.get("serial");
+    if (serial) document.getElementById("serial").value = serial;
+});
+
+// --- 2. GESTIÓN DE FIRMAS (DOBLE CANVAS) ---
+function initSignature(canvasId) {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
-    let dibujando = false;
+    let isDrawing = false;
 
-    // Ajustar tamaño al contenedor
-    function ajustar() {
-        // Guardamos la imagen actual para no perderla al redimensionar (básico)
-        // En producción idealmente se redibuja, pero esto evita que se borre al girar el celular
-        const imagenData = ctx.getImageData(0,0, canvas.width, canvas.height);
+    // Ajuste de tamaño inicial
+    function resize() {
         canvas.width = canvas.offsetWidth;
-        canvas.height = 150;
-        ctx.putImageData(imagenData, 0, 0);
+        canvas.height = 120;
     }
-    // Ajustar al inicio
-    ajustar(); 
-    // Ajustar si la ventana cambia de tamaño (opcional, cuidado que borra si no se maneja bien)
-    // window.addEventListener('resize', ajustar);
+    resize(); 
 
-    // Eventos Mouse y Touch unificados en lógica
-    const empezarDibujo = (x, y) => {
-        dibujando = true;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    };
-
-    const moverDibujo = (x, y) => {
-        if (!dibujando) return;
+    const start = (x, y) => { isDrawing = true; ctx.beginPath(); ctx.moveTo(x, y); };
+    const move = (x, y) => {
+        if (!isDrawing) return;
         ctx.lineWidth = 2;
         ctx.lineCap = "round";
         ctx.strokeStyle = "#000";
         ctx.lineTo(x, y);
         ctx.stroke();
     };
+    const end = () => { isDrawing = false; ctx.beginPath(); };
 
-    const terminarDibujo = () => {
-        dibujando = false;
-        ctx.beginPath();
-    };
+    // Eventos Mouse
+    canvas.addEventListener("mousedown", e => start(e.offsetX, e.offsetY));
+    canvas.addEventListener("mousemove", e => move(e.offsetX, e.offsetY));
+    canvas.addEventListener("mouseup", end);
+    canvas.addEventListener("mouseout", end);
 
-    // Listeners Mouse
-    canvas.addEventListener("mousedown", (e) => empezarDibujo(e.offsetX, e.offsetY));
-    canvas.addEventListener("mousemove", (e) => moverDibujo(e.offsetX, e.offsetY));
-    canvas.addEventListener("mouseup", terminarDibujo);
-    canvas.addEventListener("mouseout", terminarDibujo);
-
-    // Listeners Touch (Móvil)
-    canvas.addEventListener("touchstart", (e) => {
+    // Eventos Touch (Celulares/Tablets)
+    canvas.addEventListener("touchstart", e => {
         const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        empezarDibujo(touch.clientX - rect.left, touch.clientY - rect.top);
-        e.preventDefault(); 
-    }, { passive: false });
-
-    canvas.addEventListener("touchmove", (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        moverDibujo(touch.clientX - rect.left, touch.clientY - rect.top);
+        start(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         e.preventDefault();
     }, { passive: false });
-
-    canvas.addEventListener("touchend", terminarDibujo);
+    
+    canvas.addEventListener("touchmove", e => {
+        const rect = canvas.getBoundingClientRect();
+        move(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+        e.preventDefault();
+    }, { passive: false });
+    
+    canvas.addEventListener("touchend", end);
 
     return { canvas, ctx };
 }
 
-// Inicializamos los DOS pads
-const firmaColaborador = iniciarPadFirma("canvas_colaborador");
-const firmaAnalista = iniciarPadFirma("canvas_analista");
+// Inicializamos las dos firmas
+const firmaColab = initSignature("canvas_colaborador");
+const firmaAna = initSignature("canvas_analista");
 
-// Funciones de Limpieza
-window.limpiarFirmaColaborador = () => {
-    firmaColaborador.ctx.clearRect(0, 0, firmaColaborador.canvas.width, firmaColaborador.canvas.height);
-};
-window.limpiarFirmaAnalista = () => {
-    firmaAnalista.ctx.clearRect(0, 0, firmaAnalista.canvas.width, firmaAnalista.canvas.height);
-};
+// Botones para limpiar firma
+window.limpiarFirmaColaborador = () => firmaColab.ctx.clearRect(0,0,firmaColab.canvas.width, firmaColab.canvas.height);
+window.limpiarFirmaAnalista = () => firmaAna.ctx.clearRect(0,0,firmaAna.canvas.width, firmaAna.canvas.height);
 
 
-// --- 2. LÓGICA GENERAL ---
-document.addEventListener("DOMContentLoaded", () => {
-    const hoy = new Date().toISOString().split("T")[0];
-    document.getElementById("fecha").value = hoy;
-    obtenerSerialDesdeURL();
-});
-
-function obtenerSerialDesdeURL() {
-    const params = new URLSearchParams(window.location.search);
-    const serial = params.get("serial");
-    if (serial) {
-        document.getElementById("serial").value = serial;
-    }
-}
-
-// Validaciones de Texto (Solo números o Solo letras)
-const soloNumeros = (e) => e.target.value = e.target.value.replace(/[^0-9]/g, "");
-const soloLetras = (e) => e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
-
-// Aplicar validaciones si existen los elementos
-if(document.getElementById("cedula")) document.getElementById("cedula").addEventListener("input", soloNumeros);
-if(document.getElementById("cedula_analista")) document.getElementById("cedula_analista").addEventListener("input", soloNumeros);
-if(document.getElementById("codigo_sap_analista")) document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
-
-
-// --- 3. BÚSQUEDA API (REUTILIZABLE) ---
-
-// URL DEL FLUJO DE BÚSQUEDA (La que tú proporcionaste)
-const URL_BUSQUEDA = "https://prod-29.westus.logic.azure.com:443/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HdukGAnPtKgdUMkC1kbIqxd6pRyp_oZ_Q35IAtZGr-M";
-
-// Búsqueda Colaborador
-async function buscarColaborador() {
-    const inputCedula = document.getElementById("cedula");
-    const iconoEstado = document.getElementById("estado-busqueda-colaborador");
+// --- 3. BÚSQUEDA AUTOMÁTICA (REUTILIZABLE) ---
+async function realizarBusqueda(cedula, tipoPersona) {
+    const icono = document.getElementById(tipoPersona === 'colaborador' ? 'icono-busqueda-colaborador' : 'icono-busqueda-analista');
+    const divMsg = document.getElementById(tipoPersona === 'colaborador' ? 'msg-colaborador' : 'msg-analista');
     
-    if (!inputCedula.value) { alert("Ingrese una cédula"); return; }
+    if(!cedula) { alert("Ingrese cédula para buscar"); return; }
     
-    iconoEstado.innerHTML = '<span class="spinner-busqueda"></span>';
+    icono.innerHTML = '<span class="spinner"></span>';
+    divMsg.innerHTML = "Buscando...";
+    divMsg.style.color = "#666";
 
     try {
         const response = await fetch(URL_BUSQUEDA, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cedula: inputCedula.value })
+            body: JSON.stringify({ cedula: cedula })
         });
         const data = await response.json();
 
+        // Verificamos si la respuesta trajo datos válidos
         if (data && data.nombre_colaborador) {
-            document.getElementById("nombre_colaborador").value = data.nombre_colaborador;
-            document.getElementById("agencia").value = data.agencia || ""; 
-            // Si el API trae teléfono, lo ponemos, si no, lo dejamos vacío
-            if(document.getElementById("telefono") && data.telefono) {
-                document.getElementById("telefono").value = data.telefono; 
+            // ÉXITO
+            divMsg.innerHTML = "✅ Datos encontrados";
+            divMsg.style.color = "green";
+            icono.innerHTML = "🔍";
+
+            if (tipoPersona === 'colaborador') {
+                // Llenar campos del Colaborador
+                document.getElementById("nombre_colaborador").value = data.nombre_colaborador;
+                document.getElementById("agencia").value = data.agencia || "";
+                document.getElementById("telefono").value = data.telefono || "";
+            } else {
+                // Llenar campos del Analista
+                document.getElementById("nombre_analista").value = data.nombre_colaborador;
+                document.getElementById("agencia_analista").value = data.agencia || "";
+                document.getElementById("telefono_analista").value = data.telefono || ""; 
             }
-            iconoEstado.innerHTML = "✅";
         } else {
-            alert("Colaborador no encontrado");
-            iconoEstado.innerHTML = "❌";
+            // NO ENCONTRADO
+            divMsg.innerHTML = "❌ No encontrado en base de datos";
+            divMsg.style.color = "red";
+            icono.innerHTML = "🔍";
         }
-    } catch (error) {
-        console.error(error);
-        iconoEstado.innerHTML = "❌";
-        alert("Error de conexión al buscar");
+    } catch (e) {
+        console.error(e);
+        divMsg.innerHTML = "❌ Error de conexión";
+        divMsg.style.color = "red";
+        icono.innerHTML = "🔍";
     }
 }
 
-// Búsqueda Analista (NUEVA - Usa la misma URL)
-async function buscarAnalista() {
-    const inputCedula = document.getElementById("cedula_analista");
-    const iconoEstado = document.getElementById("estado-busqueda-analista");
-    
-    if (!inputCedula.value) { alert("Ingrese una cédula para el analista"); return; }
-    
-    iconoEstado.innerHTML = '<span class="spinner-busqueda"></span>';
-
-    try {
-        const response = await fetch(URL_BUSQUEDA, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cedula: inputCedula.value })
-        });
-        const data = await response.json();
-
-        if (data && data.nombre_colaborador) {
-            // Asignamos la respuesta a los campos del Analista
-            document.getElementById("nombre_analista").value = data.nombre_colaborador;
-            document.getElementById("agencia_analista").value = data.agencia || "";
-            // El cargo no suele venir en esa API básica, así que se deja para llenar manual si queda vacío
-            
-            iconoEstado.innerHTML = "✅";
-        } else {
-            alert("Analista no encontrado en base de datos");
-            iconoEstado.innerHTML = "❌";
-        }
-    } catch (error) {
-        console.error(error);
-        iconoEstado.innerHTML = "❌";
-        alert("Error de conexión al buscar analista");
-    }
-}
+// Asignamos las funciones a los botones globales
+window.buscarColaborador = () => realizarBusqueda(document.getElementById("cedula").value, 'colaborador');
+window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_analista").value, 'analista');
 
 
-// --- 4. ENVÍO DEL FORMULARIO ---
+// --- 4. ENVÍO DEL FORMULARIO (SUBMIT) ---
 formulario.addEventListener("submit", async (e) => {
     e.preventDefault();
-    estado.innerHTML = '<span class="spinner"></span> Generando Acta...';
-    estado.classList.add("mostrar");
+    divEstadoEnvio.innerHTML = '<div style="text-align:center; margin-top:10px;"><span class="spinner"></span> Generando Acta...</div>';
 
-    // Validar checkbox
-    if (!document.getElementById("aceptaCondiciones").checked) {
-        estado.innerText = "❌ Debe aceptar las condiciones.";
-        return;
-    }
-
-    // Convertir firmas a Base64
-    const firmaColabB64 = firmaColaborador.canvas.toDataURL("image/png").split(",")[1];
-    const firmaAnalistaB64 = firmaAnalista.canvas.toDataURL("image/png").split(",")[1];
-
-    // Helper para obtener valor de los Radios de la tabla
-    const getRadio = (name) => {
-        const checked = document.querySelector(`input[name="${name}"]:checked`);
-        return checked ? checked.value : "No"; // Default a No si falla algo
+    // Helpers para leer valores de Radios y Selects
+    const valRadio = (name) => {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : "No";
     };
+    const valSelect = (name) => document.querySelector(`[name="${name}"]`).value;
 
-    // Construcción del JSON gigante
+    // CONSTRUCCIÓN DEL OBJETO JSON (DATOS)
     const data = {
-        // Datos Colaborador
+        // 1. Datos Colaborador
         cedula: document.getElementById("cedula").value,
         nombre_colaborador: document.getElementById("nombre_colaborador").value,
-        correo_colaborador: document.getElementById("correo_colaborador").value,
-        ciudad_fecha: document.getElementById("ciudad").value + " - " + document.getElementById("fecha").value,
         agencia: document.getElementById("agencia").value,
+        telefono: document.getElementById("telefono").value,
+        correo_colaborador: document.getElementById("correo_colaborador").value,
         zona_colaborador: document.getElementById("zona_colaborador").value,
         operacion: document.getElementById("operacion").value,
-        
-        // Datos Equipo
-        marca_modelo: document.getElementById("marca_modelo").value,
-        serial: document.getElementById("serial").value,
-        sim_card_numero: document.getElementById("telefono").value,
+        ciudad_fecha: document.getElementById("ciudad").value + " - " + document.getElementById("fecha").value,
 
-        // Matriz de Inventario
-        entrega_terminal: getRadio("entrega_terminal"),
-        estado_terminal: document.querySelector('[name="estado_terminal"]').value,
-        
-        entrega_pantalla: getRadio("entrega_pantalla"),
-        estado_pantalla: document.querySelector('[name="estado_pantalla"]').value,
-        
-        entrega_estuche: getRadio("entrega_estuche"),
-        estado_estuche: document.querySelector('[name="estado_estuche"]').value,
-        
-        entrega_bateria: getRadio("entrega_bateria"),
-        estado_bateria: document.querySelector('[name="estado_bateria_item"]').value,
-        
-        entrega_cargador: getRadio("entrega_cargador"),
-        estado_cargador: document.querySelector('[name="estado_cargador"]').value,
-        
-        entrega_cable: getRadio("entrega_cable"),
-        estado_cable: document.querySelector('[name="estado_cable"]').value,
-        
-        entrega_sim: getRadio("entrega_sim"),
-        estado_sim: document.querySelector('[name="estado_sim"]').value,
+        // 2. Datos Equipo
+        tipo_equipo: "Handheld", // Campo fijo
+        marca: document.getElementById("marca").value,
+        modelo: document.getElementById("modelo").value,
+        serial: document.getElementById("serial").value,
+
+        // 3. Matriz Inventario (Lo nuevo)
+        entrega_terminal: valRadio("entrega_terminal"), estado_terminal: valSelect("estado_terminal"),
+        entrega_pantalla: valRadio("entrega_pantalla"), estado_pantalla: valSelect("estado_pantalla"),
+        entrega_estuche: valRadio("entrega_estuche"),   estado_estuche: valSelect("estado_estuche"),
+        entrega_bateria: valRadio("entrega_bateria"),   estado_bateria: valSelect("estado_bateria_item"),
+        entrega_cargador: valRadio("entrega_cargador"), estado_cargador: valSelect("estado_cargador"),
+        entrega_cable: valRadio("entrega_cable"),       estado_cable: valSelect("estado_cable"),
+        // Sim Card eliminada a petición
 
         observaciones: document.querySelector('[name="observaciones"]').value,
 
-        // Datos Analista
+        // 4. Datos Analista
         cedula_analista: document.getElementById("cedula_analista").value,
         nombre_analista: document.getElementById("nombre_analista").value,
+        agencia_analista: document.getElementById("agencia_analista").value,
+        telefono_analista: document.getElementById("telefono_analista").value,
         codigo_sap_analista: document.getElementById("codigo_sap_analista").value,
         cargo_analista: document.getElementById("cargo_analista").value,
-        agencia_analista: document.getElementById("agencia_analista").value,
         zona_analista: document.getElementById("zona_analista").value,
 
-        // Firmas
-        firma_colaborador: firmaColabB64,
-        firma_analista: firmaAnalistaB64
+        // 5. Firmas (Base64)
+        firma_colaborador: firmaColab.canvas.toDataURL("image/png").split(",")[1],
+        firma_analista: firmaAna.canvas.toDataURL("image/png").split(",")[1]
     };
 
-    // URL DEL FLUJO DE ENVÍO (Tu segunda URL)
-    const URL_ENVIO = "https://prod-47.westus.logic.azure.com:443/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eYvcvi9mTH8wpW3_QaYhkhae6jiMGh4C38LaL1eEAZI";
-
+    // ENVÍO A POWER AUTOMATE
     try {
-        const response = await fetch(URL_ENVIO, {
-            method: "POST",
+        const resp = await fetch(URL_ENVIO, {
+            method: "POST", 
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         });
 
-        if (response.ok) {
-            estado.innerText = "✅ Acta generada y enviada correctamente.";
-            // Opcional: Recargar página o limpiar
-            // location.reload(); 
+        if (resp.ok) {
+            divEstadoEnvio.innerHTML = '<div style="color:green; text-align:center; font-weight:bold; margin-top:10px;">✅ ¡Acta enviada con éxito!</div>';
+            // Opcional: Limpiar formulario tras éxito
             formulario.reset();
             limpiarFirmaColaborador();
             limpiarFirmaAnalista();
+            // Restaurar fecha
+            document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
+            
+            setTimeout(() => { divEstadoEnvio.innerHTML = ""; }, 5000);
         } else {
-            estado.innerText = "❌ Error en el servidor al recibir datos.";
+            divEstadoEnvio.innerHTML = '<div style="color:red; text-align:center;">❌ Error al enviar datos</div>';
         }
-    } catch (error) {
-        estado.innerText = "❌ Error de conexión al enviar.";
-        console.error(error);
+    } catch (err) {
+        console.error(err);
+        divEstadoEnvio.innerHTML = '<div style="color:red; text-align:center;">❌ Error de conexión</div>';
     }
 });
-obtenerSerialDesdeURL();
 
-
-
+// VALIDACIONES DE ENTRADA (Solo números)
+const soloNumeros = e => e.target.value = e.target.value.replace(/[^0-9]/g, "");
+document.getElementById("cedula").addEventListener("input", soloNumeros);
+document.getElementById("cedula_analista").addEventListener("input", soloNumeros);
+document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
