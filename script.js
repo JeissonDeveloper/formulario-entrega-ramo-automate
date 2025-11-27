@@ -1,223 +1,292 @@
-// script.js - Versión 2.1 (Ajuste Ramo Final)
-
-const formulario = document.getElementById("formulario");
-const divEstadoEnvio = document.getElementById("estado-envio");
-
-// URLS DE POWER AUTOMATE (Verifica que sean las correctas)
-// URL para BUSCAR usuario (GET/POST datos)
+// URLS POWER AUTOMATE
 const URL_BUSQUEDA = "https://prod-29.westus.logic.azure.com:443/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HdukGAnPtKgdUMkC1kbIqxd6pRyp_oZ_Q35IAtZGr-M";
-// URL para ENVIAR el acta final
 const URL_ENVIO = "https://prod-47.westus.logic.azure.com:443/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eYvcvi9mTH8wpW3_QaYhkhae6jiMGh4C38LaL1eEAZI";
 
-// --- 1. CONFIGURACIÓN INICIAL AL CARGAR ---
+// Variables globales para las firmas
+let sigColab, sigAna;
+
+// --- 1. INICIALIZACIÓN ---
 document.addEventListener("DOMContentLoaded", () => {
-    // Fecha automática
-    const hoy = new Date().toISOString().split("T")[0];
-    document.getElementById("fecha").value = hoy;
+    // Poner fecha hoy
+    document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
     
-    // Serial desde URL (si aplica)
+    // Serial por URL
     const params = new URLSearchParams(window.location.search);
-    const serial = params.get("serial");
-    if (serial) document.getElementById("serial").value = serial;
+    if(params.get("serial")) document.getElementById("serial").value = params.get("serial");
+
+    // Inicializar Canvas
+    sigColab = setupCanvas("canvas_colaborador");
+    sigAna = setupCanvas("canvas_analista");
+
+    // Recuperar datos guardados (Persistencia)
+    cargarDatosLocales();
+
+    // Inicializar estado de bloqueos (por si se recuperó un "No")
+    ['terminal', 'pantalla', 'estuche', 'bateria', 'cargador', 'cable', 'sim'].forEach(item => toggleAccesorio(item));
 });
 
-// --- 2. GESTIÓN DE FIRMAS (DOBLE CANVAS) ---
-function initSignature(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext("2d");
-    let isDrawing = false;
+// --- 2. PERSISTENCIA DE DATOS (Autoguardado) ---
+// Escuchar cambios en todo el formulario
+document.getElementById("formulario").addEventListener("input", (e) => {
+    guardarDatosLocales();
+});
 
-    // Ajuste de tamaño inicial
-    function resize() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = 120;
-    }
-    resize(); 
-
-    const start = (x, y) => { isDrawing = true; ctx.beginPath(); ctx.moveTo(x, y); };
-    const move = (x, y) => {
-        if (!isDrawing) return;
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "#000";
-        ctx.lineTo(x, y);
-        ctx.stroke();
-    };
-    const end = () => { isDrawing = false; ctx.beginPath(); };
-
-    // Eventos Mouse
-    canvas.addEventListener("mousedown", e => start(e.offsetX, e.offsetY));
-    canvas.addEventListener("mousemove", e => move(e.offsetX, e.offsetY));
-    canvas.addEventListener("mouseup", end);
-    canvas.addEventListener("mouseout", end);
-
-    // Eventos Touch (Celulares/Tablets)
-    canvas.addEventListener("touchstart", e => {
-        const rect = canvas.getBoundingClientRect();
-        start(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-        e.preventDefault();
-    }, { passive: false });
+function guardarDatosLocales() {
+    const inputs = document.querySelectorAll("input, select, textarea");
+    const datos = {};
     
-    canvas.addEventListener("touchmove", e => {
-        const rect = canvas.getBoundingClientRect();
-        move(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-        e.preventDefault();
-    }, { passive: false });
-    
-    canvas.addEventListener("touchend", end);
-
-    return { canvas, ctx };
+    inputs.forEach(el => {
+        if (el.name) {
+            if (el.type === 'radio') {
+                if (el.checked) datos[el.name] = el.value;
+            } else {
+                datos[el.name] = el.value;
+            }
+        }
+    });
+    localStorage.setItem("acta_ramo_borrador", JSON.stringify(datos));
 }
 
-// Inicializamos las dos firmas
-const firmaColab = initSignature("canvas_colaborador");
-const firmaAna = initSignature("canvas_analista");
+function cargarDatosLocales() {
+    const guardado = localStorage.getItem("acta_ramo_borrador");
+    if (!guardado) return;
 
-// Botones para limpiar firma
-window.limpiarFirmaColaborador = () => firmaColab.ctx.clearRect(0,0,firmaColab.canvas.width, firmaColab.canvas.height);
-window.limpiarFirmaAnalista = () => firmaAna.ctx.clearRect(0,0,firmaAna.canvas.width, firmaAna.canvas.height);
+    const datos = JSON.parse(guardado);
+    const inputs = document.querySelectorAll("input, select, textarea");
+
+    inputs.forEach(el => {
+        if (el.name && datos[el.name] !== undefined) {
+            if (el.type === 'radio') {
+                if (el.value === datos[el.name]) el.checked = true;
+            } else {
+                el.value = datos[el.name];
+            }
+        }
+    });
+}
+
+function borrarDatosLocales() {
+    localStorage.removeItem("acta_ramo_borrador");
+}
+
+// --- 3. LÓGICA DE BLOQUEO DE ACCESORIOS ---
+window.toggleAccesorio = (item) => {
+    // item puede ser: terminal, pantalla, estuche, bateria, cargador, cable, sim
+    // Buscamos el radio seleccionado
+    const radios = document.getElementsByName(`entrega_${item}`);
+    let valor = "No"; // Default
+    for (const r of radios) {
+        if (r.checked) {
+            valor = r.value;
+            break;
+        }
+    }
+
+    // Identificar Select y Input de Observación
+    // Nota: Batería tiene nombre especial 'estado_bateria_item'
+    let nombreSelect = `estado_${item}`;
+    if (item === 'bateria') nombreSelect = `estado_bateria_item`;
+
+    const selectEstado = document.querySelector(`select[name="${nombreSelect}"]`);
+    const inputObs = document.getElementById(`obs_${item}`);
+
+    if (valor === "No") {
+        // Bloquear
+        if (selectEstado) {
+            selectEstado.disabled = true;
+            selectEstado.value = "N/A"; // Opcional: resetear valor
+            selectEstado.classList.add("bloqueado");
+        }
+        if (inputObs) {
+            inputObs.disabled = true;
+            inputObs.value = ""; // Limpiar obs
+            inputObs.classList.add("bloqueado");
+        }
+    } else {
+        // Desbloquear
+        if (selectEstado) {
+            selectEstado.disabled = false;
+            selectEstado.classList.remove("bloqueado");
+        }
+        if (inputObs) {
+            inputObs.disabled = false;
+            inputObs.classList.remove("bloqueado");
+        }
+    }
+};
 
 
-// --- 3. BÚSQUEDA AUTOMÁTICA (REUTILIZABLE) ---
-async function realizarBusqueda(cedula, tipoPersona) {
-    const icono = document.getElementById(tipoPersona === 'colaborador' ? 'icono-busqueda-colaborador' : 'icono-busqueda-analista');
-    const divMsg = document.getElementById(tipoPersona === 'colaborador' ? 'msg-colaborador' : 'msg-analista');
+// --- 4. BÚSQUEDA ---
+window.buscarColaborador = () => realizarBusqueda(document.getElementById("cedula").value, 'colab');
+window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_analista").value, 'analista');
+
+async function realizarBusqueda(cedula, tipo) {
+    if(!cedula) { alert("Escribe una cédula primero"); return; }
     
-    if(!cedula) { alert("Ingrese cédula para buscar"); return; }
+    const sufijo = tipo === 'colab' ? 'colaborador' : 'analista';
+    const icono = document.getElementById("icono-busqueda-" + sufijo);
+    const msg = document.getElementById("msg-" + sufijo);
     
-    icono.innerHTML = '<span class="spinner"></span>';
-    divMsg.innerHTML = "Buscando...";
-    divMsg.style.color = "#666";
+    icono.innerHTML = '<span class="spinner"></span>'; 
+    msg.innerText = "Conectando..."; msg.style.color = "#666";
 
     try {
-        const response = await fetch(URL_BUSQUEDA, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const resp = await fetch(URL_BUSQUEDA, {
+            method: "POST", headers: {"Content-Type":"application/json"},
             body: JSON.stringify({ cedula: cedula })
         });
-        const data = await response.json();
+        const data = await resp.json();
+        icono.innerHTML = "🔍";
 
-        // Verificamos si la respuesta trajo datos válidos
         if (data && data.nombre_colaborador) {
-            // ÉXITO
-            divMsg.innerHTML = "✅ Datos encontrados";
-            divMsg.style.color = "green";
-            icono.innerHTML = "🔍";
-
-            if (tipoPersona === 'colaborador') {
-                // Llenar campos del Colaborador
+            msg.innerText = "✅ Datos cargados"; msg.style.color = "green";
+            if(tipo === 'colab') {
                 document.getElementById("nombre_colaborador").value = data.nombre_colaborador;
                 document.getElementById("agencia").value = data.agencia || "";
                 document.getElementById("telefono").value = data.telefono || "";
             } else {
-                // Llenar campos del Analista
                 document.getElementById("nombre_analista").value = data.nombre_colaborador;
                 document.getElementById("agencia_analista").value = data.agencia || "";
-                document.getElementById("telefono_analista").value = data.telefono || ""; 
+                document.getElementById("telefono_analista").value = data.telefono || "";
             }
+            guardarDatosLocales(); // Guardar lo que trajo la búsqueda
         } else {
-            // NO ENCONTRADO
-            divMsg.innerHTML = "❌ No encontrado en base de datos";
-            divMsg.style.color = "red";
-            icono.innerHTML = "🔍";
+            msg.innerText = "❌ Cédula no encontrada"; msg.style.color = "red";
         }
-    } catch (e) {
-        console.error(e);
-        divMsg.innerHTML = "❌ Error de conexión";
-        divMsg.style.color = "red";
-        icono.innerHTML = "🔍";
+    } catch (err) {
+        console.error(err); icono.innerHTML = "🔍"; msg.innerText = "❌ Error de conexión"; msg.style.color = "red";
     }
 }
 
-// Asignamos las funciones a los botones globales
-window.buscarColaborador = () => realizarBusqueda(document.getElementById("cedula").value, 'colaborador');
-window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_analista").value, 'analista');
+// --- 5. FIRMAS ---
+function setupCanvas(id) {
+    const c = document.getElementById(id);
+    const ctx = c.getContext("2d");
+    let drawing = false;
+    
+    const resize = () => { c.width = c.offsetWidth; c.height = 140; };
+    resize();
+    window.addEventListener('resize', resize);
 
+    const start = (e) => {
+        drawing = true; ctx.beginPath();
+        const {left, top} = c.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - left;
+        const y = (e.clientY || e.touches[0].clientY) - top;
+        ctx.moveTo(x, y); e.preventDefault();
+    };
+    const move = (e) => {
+        if(!drawing) return;
+        const {left, top} = c.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - left;
+        const y = (e.clientY || e.touches[0].clientY) - top;
+        ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
+        ctx.lineTo(x, y); ctx.stroke(); e.preventDefault();
+    };
+    const end = () => { drawing = false; };
 
-// --- 4. ENVÍO DEL FORMULARIO (SUBMIT) ---
-formulario.addEventListener("submit", async (e) => {
+    c.addEventListener("mousedown", start); c.addEventListener("touchstart", start, {passive:false});
+    c.addEventListener("mousemove", move); c.addEventListener("touchmove", move, {passive:false});
+    c.addEventListener("mouseup", end); c.addEventListener("touchend", end);
+    c.addEventListener("mouseout", end);
+    return {c, ctx};
+}
+
+window.limpiarFirma = (quien) => {
+    const target = quien === 'colab' ? sigColab : sigAna;
+    target.ctx.clearRect(0,0, target.c.width, target.c.height);
+};
+
+// --- 6. ENVÍO ---
+document.getElementById("formulario").addEventListener("submit", async (e) => {
     e.preventDefault();
-    divEstadoEnvio.innerHTML = '<div style="text-align:center; margin-top:10px;"><span class="spinner"></span> Generando Acta...</div>';
+    const estadoDiv = document.getElementById("estado-envio");
+    estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Generando...';
 
-    // Helpers para leer valores de Radios y Selects
-    const valRadio = (name) => {
-        const el = document.querySelector(`input[name="${name}"]:checked`);
-        return el ? el.value : "No";
+    // Helpers
+    const valRadio = (name) => { 
+        const el = document.querySelector(`input[name="${name}"]:checked`); 
+        return el ? el.value : "No"; 
     };
-    const valSelect = (name) => document.querySelector(`[name="${name}"]`).value;
+    // Helper especial para Selects (porque pueden estar disabled y no enviar value)
+    const valSelect = (name) => {
+        const el = document.querySelector(`select[name="${name}"]`);
+        if (el.disabled) return "N/A"; // Si está bloqueado, enviamos N/A
+        return el.value;
+    };
+    const valInput = (id) => {
+        const el = document.getElementById(id);
+        if (el.disabled) return ""; // Si está bloqueado, enviamos vacío
+        return el.value;
+    };
 
-    // CONSTRUCCIÓN DEL OBJETO JSON (DATOS)
     const data = {
-        // 1. Datos Colaborador
-        cedula: document.getElementById("cedula").value,
-        nombre_colaborador: document.getElementById("nombre_colaborador").value,
-        agencia: document.getElementById("agencia").value,
-        telefono: document.getElementById("telefono").value,
-        correo_colaborador: document.getElementById("correo_colaborador").value,
-        zona_colaborador: document.getElementById("zona_colaborador").value,
-        operacion: document.getElementById("operacion").value,
-        ciudad_fecha: document.getElementById("ciudad").value + " - " + document.getElementById("fecha").value,
+        cedula: valInput("cedula"),
+        nombre_colaborador: valInput("nombre_colaborador"),
+        agencia: valInput("agencia"),
+        telefono: valInput("telefono"),
+        correo_colaborador: valInput("correo_colaborador"),
+        codigo_sap: valInput("codigo_sap"),
+        zona_colaborador: valInput("zona_colaborador"),
+        operacion: valInput("operacion"), // este es un select por ID en HTML pero value se saca igual
+        ciudad: valInput("ciudad"),
+        fecha: valInput("fecha"),
 
-        // 2. Datos Equipo
-        tipo_equipo: "Handheld", // Campo fijo
-        marca: document.getElementById("marca").value,
-        modelo: document.getElementById("modelo").value,
-        serial: document.getElementById("serial").value,
+        tipo_equipo: "Handheld",
+        marca: valInput("marca"),
+        modelo: valInput("modelo"),
+        serial: valInput("serial"),
 
-        // 3. Matriz Inventario (Lo nuevo)
-        entrega_terminal: valRadio("entrega_terminal"), estado_terminal: valSelect("estado_terminal"),
-        entrega_pantalla: valRadio("entrega_pantalla"), estado_pantalla: valSelect("estado_pantalla"),
-        entrega_estuche: valRadio("entrega_estuche"),   estado_estuche: valSelect("estado_estuche"),
-        entrega_bateria: valRadio("entrega_bateria"),   estado_bateria: valSelect("estado_bateria_item"),
-        entrega_cargador: valRadio("entrega_cargador"), estado_cargador: valSelect("estado_cargador"),
-        entrega_cable: valRadio("entrega_cable"),       estado_cable: valSelect("estado_cable"),
-        // Sim Card eliminada a petición
+        entrega_terminal: valRadio("entrega_terminal"), estado_terminal: valSelect("estado_terminal"), obs_terminal: valInput("obs_terminal"),
+        entrega_pantalla: valRadio("entrega_pantalla"), estado_pantalla: valSelect("estado_pantalla"), obs_pantalla: valInput("obs_pantalla"),
+        entrega_estuche: valRadio("entrega_estuche"),   estado_estuche: valSelect("estado_estuche"),   obs_estuche: valInput("obs_estuche"),
+        entrega_bateria: valRadio("entrega_bateria"),   estado_bateria: valSelect("estado_bateria_item"), obs_bateria: valInput("obs_bateria"),
+        entrega_cargador: valRadio("entrega_cargador"), estado_cargador: valSelect("estado_cargador"), obs_cargador: valInput("obs_cargador"),
+        entrega_cable: valRadio("entrega_cable"),       estado_cable: valSelect("estado_cable"),       obs_cable: valInput("obs_cable"),
+        entrega_sim: valRadio("entrega_sim"),           estado_sim: valSelect("estado_sim"),           obs_sim: valInput("obs_sim"),
 
-        observaciones: document.querySelector('[name="observaciones"]').value,
+        accesorios_adicionales: valInput("accesorios_adicionales"),
+        observaciones: valInput("observaciones"),
 
-        // 4. Datos Analista
-        cedula_analista: document.getElementById("cedula_analista").value,
-        nombre_analista: document.getElementById("nombre_analista").value,
-        agencia_analista: document.getElementById("agencia_analista").value,
-        telefono_analista: document.getElementById("telefono_analista").value,
-        codigo_sap_analista: document.getElementById("codigo_sap_analista").value,
-        cargo_analista: document.getElementById("cargo_analista").value,
-        zona_analista: document.getElementById("zona_analista").value,
+        cedula_analista: valInput("cedula_analista"),
+        nombre_analista: valInput("nombre_analista"),
+        agencia_analista: valInput("agencia_analista"),
+        telefono_analista: valInput("telefono_analista"),
+        codigo_sap_analista: valInput("codigo_sap_analista"),
+        cargo_analista: valInput("cargo_analista"),
+        zona_analista: valInput("zona_analista"),
 
-        // 5. Firmas (Base64)
-        firma_colaborador: firmaColab.canvas.toDataURL("image/png").split(",")[1],
-        firma_analista: firmaAna.canvas.toDataURL("image/png").split(",")[1]
+        firma_colaborador: sigColab.c.toDataURL().split(",")[1],
+        firma_analista: sigAna.c.toDataURL().split(",")[1]
     };
-
-    // ENVÍO A POWER AUTOMATE
+    
     try {
         const resp = await fetch(URL_ENVIO, {
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
+            method: "POST", headers: {"Content-Type":"application/json"},
             body: JSON.stringify(data)
         });
-
-        if (resp.ok) {
-            divEstadoEnvio.innerHTML = '<div style="color:green; text-align:center; font-weight:bold; margin-top:10px;">✅ ¡Acta enviada con éxito!</div>';
-            // Opcional: Limpiar formulario tras éxito
-            formulario.reset();
-            limpiarFirmaColaborador();
-            limpiarFirmaAnalista();
-            // Restaurar fecha
+        if(resp.ok) {
+            estadoDiv.innerText = "✅ ¡Enviado Exitosamente!";
+            estadoDiv.style.color = "green";
+            // Limpiar datos guardados al enviar exitosamente
+            borrarDatosLocales();
+            document.getElementById("formulario").reset();
+            limpiarFirma('colab'); limpiarFirma('ana');
             document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
-            
-            setTimeout(() => { divEstadoEnvio.innerHTML = ""; }, 5000);
+            // Resetear bloqueos visuales
+            ['terminal', 'pantalla', 'estuche', 'bateria', 'cargador', 'cable', 'sim'].forEach(item => toggleAccesorio(item));
         } else {
-            divEstadoEnvio.innerHTML = '<div style="color:red; text-align:center;">❌ Error al enviar datos</div>';
+            throw new Error("Error API");
         }
-    } catch (err) {
-        console.error(err);
-        divEstadoEnvio.innerHTML = '<div style="color:red; text-align:center;">❌ Error de conexión</div>';
+    } catch(err) {
+        estadoDiv.innerText = "❌ Error al enviar (Verificar Flujo)";
+        estadoDiv.style.color = "red";
     }
 });
 
-// VALIDACIONES DE ENTRADA (Solo números)
+// Validaciones
 const soloNumeros = e => e.target.value = e.target.value.replace(/[^0-9]/g, "");
 document.getElementById("cedula").addEventListener("input", soloNumeros);
 document.getElementById("cedula_analista").addEventListener("input", soloNumeros);
 document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
+document.getElementById("codigo_sap").addEventListener("input", soloNumeros);
