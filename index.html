@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Acta de Entrega - RAMO</title>
+  <!-- Asegúrate de que este archivo exista o agrega los estilos aquí -->
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 
 <div class="main-container">
     <header>
-        <img src="logo-ramo.png" alt="Logo RAMO" class="logo" />
+        <!-- Asegúrate de tener la imagen o cambiar el src -->
+        <img src="logo-ramo.png" alt="Logo RAMO" class="logo" onerror="this.style.display='none'"/>
         <h1>Acta de Entrega de Dispositivos Móviles</h1>
     </header>
 
@@ -43,11 +45,11 @@
         </div>
         <div id="msg-colaborador" class="msg-estado"></div>
 
-        <label>Nombre Completo:</label><input type="text" id="nombre_colaborador" name="nombre_colaborador" readonly class="input-readonly">
+        <label>Nombre Completo:</label><input type="text" id="nombre_colaborador" name="nombre_colaborador" readonly class="input-readonly" required>
         
         <div class="grid-2">
-            <div><label>Agencia:</label><input type="text" id="agencia" name="agencia" readonly class="input-readonly"></div>
-            <div><label>Teléfono:</label><input type="text" id="telefono" name="telefono" readonly class="input-readonly"></div>
+            <div><label>Agencia:</label><input type="text" id="agencia" name="agencia" readonly class="input-readonly" required></div>
+            <div><label>Teléfono:</label><input type="text" id="telefono" name="telefono" readonly class="input-readonly" required></div>
         </div>
 
         <label>Correo Electrónico:</label>
@@ -101,7 +103,8 @@
         </div>
 
         <label>Serial (IMEI/SN):</label>
-        <input type="text" id="serial" name="serial" required placeholder="Escanee o digite">
+        <!-- AQUI SE APLICO EL CAMBIO: readonly y class="input-readonly" -->
+        <input type="text" id="serial" name="serial" required readonly class="input-readonly" placeholder="Serial automático">
 
         <div class="seccion-header" style="background:#B70000; margin-top:30px;"><span class="numero" style="background:#fff; color:#B70000;">✓</span> Estado de Accesorios</div>
         
@@ -207,11 +210,12 @@
 
         </div>
 
-        <!-- NUEVO CAMPO: OTROS ACCESORIOS -->
+        <!-- OTROS ACCESORIOS -->
         <label style="margin-top:20px;">Accesorios Entregados (Escriba aquí):</label>
         <textarea id="accesorios_adicionales" name="accesorios_adicionales" rows="2" placeholder="Ej: Protector de Pantalla, Estuche, Cargador..."></textarea>
 
         <label style="margin-top:15px;">Observaciones Generales:</label>
+        <!-- Este se queda SIN required para que sea opcional -->
         <textarea id="observaciones" name="observaciones" rows="3" placeholder="Comentarios generales de la entrega..."></textarea>
 
         <!-- 3. ANALISTA -->
@@ -226,11 +230,11 @@
         </div>
         <div id="msg-analista" class="msg-estado"></div>
 
-        <label>Nombre Analista:</label><input type="text" id="nombre_analista" name="nombre_analista" readonly class="input-readonly">
+        <label>Nombre Analista:</label><input type="text" id="nombre_analista" name="nombre_analista" readonly class="input-readonly" required>
 
         <div class="grid-2">
-            <div><label>Agencia:</label><input type="text" id="agencia_analista" name="agencia_analista" readonly class="input-readonly"></div>
-            <div><label>Teléfono:</label><input type="text" id="telefono_analista" name="telefono_analista" readonly class="input-readonly"></div>
+            <div><label>Agencia:</label><input type="text" id="agencia_analista" name="agencia_analista" readonly class="input-readonly" required></div>
+            <div><label>Teléfono:</label><input type="text" id="telefono_analista" name="telefono_analista" readonly class="input-readonly" required></div>
         </div>
 
         <div class="grid-3">
@@ -244,11 +248,13 @@
         <div class="grid-2 firmas-wrapper">
             <div class="firma-card">
                 <label>Colaborador (Recibe)</label>
+                <!-- Se agrega validación visual en JS -->
                 <canvas id="canvas_colaborador" class="canvas-firma"></canvas>
                 <button type="button" class="btn-clear" onclick="limpiarFirma('colab')">Borrar Firma</button>
             </div>
             <div class="firma-card">
                 <label>Analista (Entrega)</label>
+                <!-- Se agrega validación visual en JS -->
                 <canvas id="canvas_analista" class="canvas-firma"></canvas>
                 <button type="button" class="btn-clear" onclick="limpiarFirma('ana')">Borrar Firma</button>
             </div>
@@ -270,4 +276,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
