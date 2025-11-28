@@ -36,7 +36,8 @@ function guardarDatosLocales() {
     const datos = {};
     
     inputs.forEach(el => {
-        if (el.name) {
+        // Modificación: Excluir 'serial' para no guardar datos antiguos
+        if (el.name && el.name !== 'serial') {
             if (el.type === 'radio') {
                 if (el.checked) datos[el.name] = el.value;
             } else {
@@ -55,7 +56,8 @@ function cargarDatosLocales() {
     const inputs = document.querySelectorAll("input, select, textarea");
 
     inputs.forEach(el => {
-        if (el.name && datos[el.name] !== undefined) {
+        // Modificación: Excluir 'serial' para no sobrescribir el que viene por URL
+        if (el.name && el.name !== 'serial' && datos[el.name] !== undefined) {
             if (el.type === 'radio') {
                 if (el.value === datos[el.name]) el.checked = true;
             } else {
