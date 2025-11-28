@@ -163,13 +163,15 @@ function setupCanvas(id) {
     const c = document.getElementById(id);
     const ctx = c.getContext("2d");
     let drawing = false;
+    let wasUsed = false; // Bandera para saber si se ha firmado
     
     const resize = () => { c.width = c.offsetWidth; c.height = 140; };
     resize();
     window.addEventListener('resize', resize);
 
     const start = (e) => {
-        drawing = true; ctx.beginPath();
+        drawing = true; wasUsed = true; // Marcamos como usado
+        ctx.beginPath();
         const {left, top} = c.getBoundingClientRect();
         const x = (e.clientX || e.touches[0].clientX) - left;
         const y = (e.clientY || e.touches[0].clientY) - top;
@@ -189,17 +191,32 @@ function setupCanvas(id) {
     c.addEventListener("mousemove", move); c.addEventListener("touchmove", move, {passive:false});
     c.addEventListener("mouseup", end); c.addEventListener("touchend", end);
     c.addEventListener("mouseout", end);
-    return {c, ctx};
+    
+    // Devolvemos el canvas, el contexto y una función para verificar si se usó
+    return {c, ctx, isSigned: () => wasUsed, reset: () => { wasUsed = false; } };
 }
 
 window.limpiarFirma = (quien) => {
     const target = quien === 'colab' ? sigColab : sigAna;
     target.ctx.clearRect(0,0, target.c.width, target.c.height);
+    target.reset(); // Reseteamos la bandera de "firmado"
 };
 
 // --- 6. ENVÍO ---
 document.getElementById("formulario").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // -- VALIDACIÓN DE FIRMAS (BLOQUEO TOTAL) --
+    if (!sigColab.isSigned()) {
+        alert("⚠️ FALTA FIRMA DEL COLABORADOR. Por favor firme antes de generar el acta.");
+        return;
+    }
+    if (!sigAna.isSigned()) {
+        alert("⚠️ FALTA FIRMA DEL ANALISTA. Por favor firme antes de generar el acta.");
+        return;
+    }
+    // -------------------------------------------
+
     const estadoDiv = document.getElementById("estado-envio");
     estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Generando...';
 
