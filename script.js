@@ -1,15 +1,90 @@
 // ============================================================================
 // FORMULARIO DE ENTREGA DE DISPOSITIVOS MÓVILES - RAMO
-// Versión: 2.0 - Actualizada Enero 2025
+// Versión: 2.1 - Actualizada Enero 2025
+// Cambios v2.1:
+// - Eliminados alerts (reemplazados por notificaciones en pantalla)
+// - Firma analista opcional con imagen transparente para Power Automate
 // ============================================================================
 
 // URLS POWER AUTOMATE - ACTUALIZADAS (Enero 2025)
 const URL_BUSQUEDA = "https://defaultaf5eb6a454944a9ea659b79c92301b.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eO1cDqSsJme9vmuEXbqUEC0sZqHjRmJHA_a0_nqgH1U";
 const URL_ENVIO = "https://defaultaf5eb6a454944a9ea659b79c92301b.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iOKsXvZTSJH4t6IdYRpY3v9ilpWpjChdJngf83FceoY";
 
+// Imagen transparente de 1x1 pixel en base64 (PNG)
+// Esta se usa cuando no hay firma del analista para que Power Automate no falle
+const IMAGEN_TRANSPARENTE = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
 // Variables globales
 let sigColab, sigAna;
-let enviandoFormulario = false; // Control de envíos duplicados
+let enviandoFormulario = false;
+
+// ============================================================================
+// SISTEMA DE NOTIFICACIONES (Reemplaza alerts)
+// ============================================================================
+function mostrarNotificacion(mensaje, tipo = 'info') {
+    // Tipos: 'success', 'error', 'warning', 'info'
+    
+    // Crear o obtener contenedor de notificaciones
+    let container = document.getElementById('notificaciones-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificaciones-container';
+        container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+        `;
+        document.body.appendChild(container);
+    }
+    
+    // Crear notificación
+    const notificacion = document.createElement('div');
+    notificacion.style.cssText = `
+        background: ${tipo === 'success' ? '#d4edda' : tipo === 'error' ? '#f8d7da' : tipo === 'warning' ? '#fff3cd' : '#d1ecf1'};
+        color: ${tipo === 'success' ? '#155724' : tipo === 'error' ? '#721c24' : tipo === 'warning' ? '#856404' : '#0c5460'};
+        border: 2px solid ${tipo === 'success' ? '#c3e6cb' : tipo === 'error' ? '#f5c6cb' : tipo === 'warning' ? '#ffeeba' : '#bee5eb'};
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    `;
+    
+    const icono = tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️';
+    notificacion.innerHTML = `<span style="font-size: 1.2rem;">${icono}</span><span>${mensaje}</span>`;
+    
+    container.appendChild(notificacion);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        notificacion.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notificacion.remove(), 300);
+    }, 5000);
+}
+
+// Agregar estilos de animación
+if (!document.getElementById('notificaciones-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notificaciones-styles';
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 // ============================================================================
 // 1. INICIALIZACIÓN
@@ -34,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Inicializar estado de bloqueos
     ['terminal', 'pantalla', 'estuche', 'bateria', 'cargador', 'cable', 'sim'].forEach(item => toggleAccesorio(item));
     
-    console.log("✅ Formulario RAMO inicializado correctamente");
+    console.log("✅ Formulario RAMO v2.1 inicializado correctamente");
 });
 
 // ============================================================================
@@ -63,7 +138,6 @@ function guardarDatosLocales() {
     const datos = {};
     
     inputs.forEach(el => {
-        // Excluir 'serial' para no guardar datos antiguos
         if (el.name && el.name !== 'serial') {
             if (el.type === 'radio') {
                 if (el.checked) datos[el.name] = el.value;
@@ -85,7 +159,6 @@ function cargarDatosLocales() {
     const inputs = document.querySelectorAll("input, select, textarea");
 
     inputs.forEach(el => {
-        // Excluir 'serial' para no sobrescribir el que viene por URL
         if (el.name && el.name !== 'serial' && datos[el.name] !== undefined) {
             if (el.type === 'radio') {
                 if (el.value === datos[el.name]) el.checked = true;
@@ -116,7 +189,6 @@ window.toggleAccesorio = (item) => {
         }
     }
 
-    // Identificar Select y Input de Observación
     let nombreSelect = `estado_${item}`;
     if (item === 'bateria') nombreSelect = `estado_bateria_item`;
 
@@ -124,7 +196,6 @@ window.toggleAccesorio = (item) => {
     const inputObs = document.getElementById(`obs_${item}`);
 
     if (valor === "No") {
-        // Bloquear
         if (selectEstado) {
             selectEstado.disabled = true;
             selectEstado.value = "N/A";
@@ -136,7 +207,6 @@ window.toggleAccesorio = (item) => {
             inputObs.classList.add("bloqueado");
         }
     } else {
-        // Desbloquear
         if (selectEstado) {
             selectEstado.disabled = false;
             selectEstado.classList.remove("bloqueado");
@@ -156,7 +226,7 @@ window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_a
 
 async function realizarBusqueda(cedula, tipo) {
     if(!cedula || cedula.trim() === "") { 
-        alert("⚠️ Por favor ingrese una cédula válida"); 
+        mostrarNotificacion("Por favor ingrese una cédula válida", 'warning');
         return; 
     }
     
@@ -189,12 +259,10 @@ async function realizarBusqueda(cedula, tipo) {
                 document.getElementById("agencia").value = data.agencia || "";
                 document.getElementById("telefono").value = data.telefono || "";
             } else {
-                // MEJORA: Autocompletar TODOS los campos del analista
                 document.getElementById("nombre_analista").value = data.nombre_colaborador || "";
                 document.getElementById("agencia_analista").value = data.agencia || "";
                 document.getElementById("telefono_analista").value = data.telefono || "";
                 
-                // Autocompletar campos adicionales si vienen en la respuesta
                 if (data.codigo_sap) document.getElementById("codigo_sap_analista").value = data.codigo_sap;
                 if (data.cargo) document.getElementById("cargo_analista").value = data.cargo;
                 if (data.zona) document.getElementById("zona_analista").value = data.zona;
@@ -283,21 +351,18 @@ window.limpiarFirma = (quien) => {
 function validarFormulario() {
     const errores = [];
     
-    // VALIDACIÓN 1: Serial obligatorio (NO puede estar vacío)
+    // VALIDACIÓN 1: Serial obligatorio
     const serial = document.getElementById("serial").value.trim();
     if (!serial || serial === "") {
-        errores.push("❌ El campo SERIAL es obligatorio y no puede estar vacío.");
+        errores.push("El campo SERIAL es obligatorio y no puede estar vacío.");
     }
     
     // VALIDACIÓN 2: Firma del colaborador (obligatoria)
     if (!sigColab.isSigned()) {
-        errores.push("❌ La firma del COLABORADOR es obligatoria.");
+        errores.push("La firma del COLABORADOR es obligatoria.");
     }
     
-    // VALIDACIÓN 3: Firma del analista (AHORA ES OPCIONAL - según requerimiento #3)
-    // Ya no se valida la firma del analista
-    
-    // VALIDACIÓN 4: Campos requeridos básicos
+    // VALIDACIÓN 3: Campos requeridos básicos
     const camposRequeridos = [
         { id: 'cedula', nombre: 'Cédula Colaborador' },
         { id: 'nombre_colaborador', nombre: 'Nombre Colaborador' },
@@ -310,7 +375,7 @@ function validarFormulario() {
     camposRequeridos.forEach(campo => {
         const valor = document.getElementById(campo.id).value.trim();
         if (!valor || valor === "") {
-            errores.push(`❌ El campo "${campo.nombre}" es obligatorio.`);
+            errores.push(`El campo "${campo.nombre}" es obligatorio.`);
         }
     });
     
@@ -325,30 +390,33 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
 
     // PROTECCIÓN: Evitar envíos duplicados
     if (enviandoFormulario) {
-        alert("⚠️ El formulario ya se está enviando. Por favor espere...");
+        mostrarNotificacion("El formulario ya se está enviando. Por favor espere...", 'warning');
         return;
     }
 
     // Ejecutar validaciones
     const errores = validarFormulario();
     if (errores.length > 0) {
-        alert("⚠️ ERRORES EN EL FORMULARIO:\n\n" + errores.join("\n"));
+        mostrarNotificacion("ERRORES EN EL FORMULARIO:", 'error');
+        errores.forEach(error => {
+            setTimeout(() => mostrarNotificacion(error, 'error'), 100);
+        });
         return;
     }
 
-    // Marcar como "enviando" para evitar duplicados
+    // Marcar como "enviando"
     enviandoFormulario = true;
     
     const estadoDiv = document.getElementById("estado-envio");
     const btnEnviar = document.querySelector('.btn-principal');
     
-    // Deshabilitar botón y mostrar spinner
+    // Deshabilitar botón
     btnEnviar.disabled = true;
     btnEnviar.style.opacity = "0.6";
     btnEnviar.style.cursor = "not-allowed";
     estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Enviando acta...';
 
-    // Helpers para extraer valores
+    // Helpers
     const valRadio = (name) => { 
         const el = document.querySelector(`input[name="${name}"]:checked`); 
         return el ? el.value : "No"; 
@@ -366,9 +434,8 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         return el.value.trim();
     };
 
-    // Preparar datos del formulario
+    // Preparar datos
     const data = {
-        // Colaborador
         cedula: valInput("cedula"),
         nombre_colaborador: valInput("nombre_colaborador"),
         agencia: valInput("agencia"),
@@ -380,13 +447,11 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         ciudad: valInput("ciudad"),
         fecha: valInput("fecha"),
 
-        // Dispositivo
         tipo_equipo: "Handheld",
         marca: valInput("marca"),
         modelo: valInput("modelo"),
-        serial: valInput("serial"), // VALIDADO como obligatorio
+        serial: valInput("serial"),
 
-        // Accesorios
         entrega_terminal: valRadio("entrega_terminal"), 
         estado_terminal: valSelect("estado_terminal"), 
         obs_terminal: valInput("obs_terminal"),
@@ -418,7 +483,6 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         accesorios_adicionales: valInput("accesorios_adicionales"),
         observaciones: valInput("observaciones"),
 
-        // Analista
         cedula_analista: valInput("cedula_analista"),
         nombre_analista: valInput("nombre_analista"),
         agencia_analista: valInput("agencia_analista"),
@@ -427,10 +491,9 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         cargo_analista: valInput("cargo_analista"),
         zona_analista: valInput("zona_analista"),
 
-        // Firmas
+        // SOLUCIÓN: Si no hay firma del analista, enviar imagen transparente
         firma_colaborador: sigColab.c.toDataURL().split(",")[1],
-        // MEJORA: Firma del analista ahora es OPCIONAL
-        firma_analista: sigAna.isSigned() ? sigAna.c.toDataURL().split(",")[1] : ""
+        firma_analista: sigAna.isSigned() ? sigAna.c.toDataURL().split(",")[1] : IMAGEN_TRANSPARENTE
     };
     
     try {
@@ -444,25 +507,24 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
             estadoDiv.innerHTML = "✅ ¡Acta enviada exitosamente!";
             estadoDiv.style.color = "green";
             
-            // Limpiar formulario y datos guardados
+            mostrarNotificacion("Acta generada y enviada correctamente", 'success');
+            
             setTimeout(() => {
+                mostrarNotificacion("Puede realizar una nueva entrega", 'info');
+                
                 borrarDatosLocales();
                 document.getElementById("formulario").reset();
                 limpiarFirma('colab'); 
                 limpiarFirma('ana');
-                configurarFechaActual(); // Reconfigurar fecha actual
+                configurarFechaActual();
                 
-                // Resetear bloqueos visuales
                 ['terminal', 'pantalla', 'estuche', 'bateria', 'cargador', 'cable', 'sim'].forEach(item => toggleAccesorio(item));
                 
-                // Re-habilitar botón
                 enviandoFormulario = false;
                 btnEnviar.disabled = false;
                 btnEnviar.style.opacity = "1";
                 btnEnviar.style.cursor = "pointer";
                 estadoDiv.innerHTML = "";
-                
-                alert("✅ Acta generada y enviada correctamente.\n\nPuede realizar una nueva entrega.");
             }, 2000);
             
         } else {
@@ -473,13 +535,12 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         estadoDiv.innerHTML = "❌ Error al enviar el acta";
         estadoDiv.style.color = "red";
         
-        // Re-habilitar botón en caso de error
+        mostrarNotificacion("Error al enviar el acta. Verifique su conexión e intente nuevamente.", 'error');
+        
         enviandoFormulario = false;
         btnEnviar.disabled = false;
         btnEnviar.style.opacity = "1";
         btnEnviar.style.cursor = "pointer";
-        
-        alert("❌ Error al enviar el acta. Por favor:\n\n1. Verifique su conexión a internet\n2. Verifique que todos los datos sean correctos\n3. Intente nuevamente\n\nSi el problema persiste, contacte a soporte técnico.");
     }
 });
 
@@ -493,11 +554,10 @@ document.getElementById("cedula_analista").addEventListener("input", soloNumeros
 document.getElementById("codigo_sap_analista").addEventListener("input", soloNumeros);
 document.getElementById("codigo_sap").addEventListener("input", soloNumeros);
 
-// Validación de correo electrónico
 document.getElementById("correo_colaborador").addEventListener("blur", function() {
     const correo = this.value.trim();
     if (correo && !correo.includes("@")) {
-        alert("⚠️ Por favor ingrese un correo electrónico válido");
+        mostrarNotificacion("Por favor ingrese un correo electrónico válido", 'warning');
         this.focus();
     }
 });
@@ -505,4 +565,4 @@ document.getElementById("correo_colaborador").addEventListener("blur", function(
 // ============================================================================
 // FIN DEL SCRIPT
 // ============================================================================
-console.log("📝 Sistema de Formularios RAMO v2.0 - Cargado correctamente");
+console.log("📝 Sistema de Formularios RAMO v2.1 - Cargado correctamente");
