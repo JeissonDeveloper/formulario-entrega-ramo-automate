@@ -1,30 +1,24 @@
 // ============================================================================
 // FORMULARIO DE ENTREGA DE DISPOSITIVOS MÓVILES - RAMO
-// Versión: 2.1 - Actualizada Enero 2025
-// Cambios v2.1:
-// - Eliminados alerts (reemplazados por notificaciones en pantalla)
-// - Firma analista opcional con imagen transparente para Power Automate
+// Versión: 2.3 FINAL - Actualizada Enero 2025
+// Cambios v2.3:
+// - AMBAS FIRMAS OBLIGATORIAS (funcionales sin bloqueos)
+// - Imagen válida para Power Automate cuando NO hay firma
+// - Sin alerts (notificaciones profesionales)
 // ============================================================================
 
-// URLS POWER AUTOMATE - ACTUALIZADAS (Enero 2025)
+// URLS POWER AUTOMATE
 const URL_BUSQUEDA = "https://defaultaf5eb6a454944a9ea659b79c92301b.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/aed1a8e6527c409fa89020e534c2b5c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eO1cDqSsJme9vmuEXbqUEC0sZqHjRmJHA_a0_nqgH1U";
 const URL_ENVIO = "https://defaultaf5eb6a454944a9ea659b79c92301b.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/241ab4c9e8dd4b499963538107ded6ae/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iOKsXvZTSJH4t6IdYRpY3v9ilpWpjChdJngf83FceoY";
-
-// Imagen transparente de 1x1 pixel en base64 (PNG)
-// Esta se usa cuando no hay firma del analista para que Power Automate no falle
-const IMAGEN_TRANSPARENTE = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
 // Variables globales
 let sigColab, sigAna;
 let enviandoFormulario = false;
 
 // ============================================================================
-// SISTEMA DE NOTIFICACIONES (Reemplaza alerts)
+// SISTEMA DE NOTIFICACIONES
 // ============================================================================
 function mostrarNotificacion(mensaje, tipo = 'info') {
-    // Tipos: 'success', 'error', 'warning', 'info'
-    
-    // Crear o obtener contenedor de notificaciones
     let container = document.getElementById('notificaciones-container');
     if (!container) {
         container = document.createElement('div');
@@ -39,7 +33,6 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
         document.body.appendChild(container);
     }
     
-    // Crear notificación
     const notificacion = document.createElement('div');
     notificacion.style.cssText = `
         background: ${tipo === 'success' ? '#d4edda' : tipo === 'error' ? '#f8d7da' : tipo === 'warning' ? '#fff3cd' : '#d1ecf1'};
@@ -62,14 +55,12 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
     
     container.appendChild(notificacion);
     
-    // Auto-eliminar después de 5 segundos
     setTimeout(() => {
         notificacion.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => notificacion.remove(), 300);
     }, 5000);
 }
 
-// Agregar estilos de animación
 if (!document.getElementById('notificaciones-styles')) {
     const style = document.createElement('style');
     style.id = 'notificaciones-styles';
@@ -90,34 +81,28 @@ if (!document.getElementById('notificaciones-styles')) {
 // 1. INICIALIZACIÓN
 // ============================================================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Configurar fecha correcta (zona horaria Colombia)
     configurarFechaActual();
     
-    // Serial por URL
     const params = new URLSearchParams(window.location.search);
     if(params.get("serial")) {
         document.getElementById("serial").value = params.get("serial");
     }
 
-    // Inicializar Canvas de firmas
     sigColab = setupCanvas("canvas_colaborador");
     sigAna = setupCanvas("canvas_analista");
 
-    // Recuperar datos guardados (Persistencia)
     cargarDatosLocales();
 
-    // Inicializar estado de bloqueos
     ['terminal', 'pantalla', 'estuche', 'bateria', 'cargador', 'cable', 'sim'].forEach(item => toggleAccesorio(item));
     
-    console.log("✅ Formulario RAMO v2.1 inicializado correctamente");
+    console.log("✅ Formulario RAMO v2.3 FINAL inicializado correctamente");
 });
 
 // ============================================================================
-// 2. CONFIGURACIÓN DE FECHA (CORRECCIÓN ZONA HORARIA)
+// 2. CONFIGURACIÓN DE FECHA
 // ============================================================================
 function configurarFechaActual() {
     const ahora = new Date();
-    // Ajustar a zona horaria de Colombia (UTC-5)
     const fechaColombia = new Date(ahora.toLocaleString("en-US", {timeZone: "America/Bogota"}));
     const año = fechaColombia.getFullYear();
     const mes = String(fechaColombia.getMonth() + 1).padStart(2, '0');
@@ -127,7 +112,7 @@ function configurarFechaActual() {
 }
 
 // ============================================================================
-// 3. PERSISTENCIA DE DATOS (Autoguardado)
+// 3. PERSISTENCIA DE DATOS
 // ============================================================================
 document.getElementById("formulario").addEventListener("input", () => {
     guardarDatosLocales();
@@ -219,7 +204,7 @@ window.toggleAccesorio = (item) => {
 };
 
 // ============================================================================
-// 5. BÚSQUEDA DE COLABORADORES Y ANALISTAS
+// 5. BÚSQUEDA
 // ============================================================================
 window.buscarColaborador = () => realizarBusqueda(document.getElementById("cedula").value, 'colab');
 window.buscarAnalista = () => realizarBusqueda(document.getElementById("cedula_analista").value, 'analista');
@@ -282,7 +267,7 @@ async function realizarBusqueda(cedula, tipo) {
 }
 
 // ============================================================================
-// 6. SISTEMA DE FIRMAS DIGITALES
+// 6. FIRMAS DIGITALES - SIN BLOQUEOS
 // ============================================================================
 function setupCanvas(id) {
     const c = document.getElementById(id);
@@ -346,27 +331,29 @@ window.limpiarFirma = (quien) => {
 };
 
 // ============================================================================
-// 7. VALIDACIONES PREVIAS AL ENVÍO
+// 7. VALIDACIONES - AMBAS FIRMAS OBLIGATORIAS
 // ============================================================================
 function validarFormulario() {
     const errores = [];
     
-    // VALIDACIÓN 1: Serial obligatorio
     const serial = document.getElementById("serial").value.trim();
     if (!serial || serial === "") {
         errores.push("El campo SERIAL es obligatorio y no puede estar vacío.");
     }
     
-    // VALIDACIÓN 2: Firma del colaborador (obligatoria)
+    // AMBAS FIRMAS SON OBLIGATORIAS
     if (!sigColab.isSigned()) {
-        errores.push("La firma del COLABORADOR es obligatoria.");
+        errores.push("La firma de quien RECIBE es obligatoria.");
     }
     
-    // VALIDACIÓN 3: Campos requeridos básicos
+    if (!sigAna.isSigned()) {
+        errores.push("La firma de quien ENTREGA es obligatoria.");
+    }
+    
     const camposRequeridos = [
-        { id: 'cedula', nombre: 'Cédula Colaborador' },
-        { id: 'nombre_colaborador', nombre: 'Nombre Colaborador' },
-        { id: 'correo_colaborador', nombre: 'Correo Colaborador' },
+        { id: 'cedula', nombre: 'Cédula de quien Recibe' },
+        { id: 'nombre_colaborador', nombre: 'Nombre de quien Recibe' },
+        { id: 'correo_colaborador', nombre: 'Correo de quien Recibe' },
         { id: 'operacion', nombre: 'Cargo/Operación' },
         { id: 'marca', nombre: 'Marca del Dispositivo' },
         { id: 'modelo', nombre: 'Modelo del Dispositivo' }
@@ -383,18 +370,16 @@ function validarFormulario() {
 }
 
 // ============================================================================
-// 8. ENVÍO DEL FORMULARIO
+// 8. ENVÍO
 // ============================================================================
 document.getElementById("formulario").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // PROTECCIÓN: Evitar envíos duplicados
     if (enviandoFormulario) {
         mostrarNotificacion("El formulario ya se está enviando. Por favor espere...", 'warning');
         return;
     }
 
-    // Ejecutar validaciones
     const errores = validarFormulario();
     if (errores.length > 0) {
         mostrarNotificacion("ERRORES EN EL FORMULARIO:", 'error');
@@ -404,19 +389,16 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         return;
     }
 
-    // Marcar como "enviando"
     enviandoFormulario = true;
     
     const estadoDiv = document.getElementById("estado-envio");
     const btnEnviar = document.querySelector('.btn-principal');
     
-    // Deshabilitar botón
     btnEnviar.disabled = true;
     btnEnviar.style.opacity = "0.6";
     btnEnviar.style.cursor = "not-allowed";
     estadoDiv.innerHTML = '<span class="spinner" style="border-color: #666; border-top-color: #000;"></span> Enviando acta...';
 
-    // Helpers
     const valRadio = (name) => { 
         const el = document.querySelector(`input[name="${name}"]:checked`); 
         return el ? el.value : "No"; 
@@ -434,7 +416,6 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         return el.value.trim();
     };
 
-    // Preparar datos
     const data = {
         cedula: valInput("cedula"),
         nombre_colaborador: valInput("nombre_colaborador"),
@@ -491,9 +472,9 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
         cargo_analista: valInput("cargo_analista"),
         zona_analista: valInput("zona_analista"),
 
-        // SOLUCIÓN: Si no hay firma del analista, enviar imagen transparente
+        // AMBAS FIRMAS SIEMPRE SE ENVÍAN (ya validamos que existan)
         firma_colaborador: sigColab.c.toDataURL().split(",")[1],
-        firma_analista: sigAna.isSigned() ? sigAna.c.toDataURL().split(",")[1] : IMAGEN_TRANSPARENTE
+        firma_analista: sigAna.c.toDataURL().split(",")[1]
     };
     
     try {
@@ -562,7 +543,4 @@ document.getElementById("correo_colaborador").addEventListener("blur", function(
     }
 });
 
-// ============================================================================
-// FIN DEL SCRIPT
-// ============================================================================
-console.log("📝 Sistema de Formularios RAMO v2.1 - Cargado correctamente");
+console.log("📝 Sistema de Formularios RAMO v2.3 FINAL - Cargado correctamente");
