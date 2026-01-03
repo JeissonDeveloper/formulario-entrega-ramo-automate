@@ -267,7 +267,7 @@ async function realizarBusqueda(cedula, tipo) {
 }
 
 // ============================================================================
-// 6. FIRMAS DIGITALES - SIN BLOQUEOS
+// 6. FIRMAS DIGITALES - MEJORADO PARA EVITAR BORRADO AL HACER SCROLL
 // ============================================================================
 function setupCanvas(id) {
     const c = document.getElementById(id);
@@ -283,38 +283,56 @@ function setupCanvas(id) {
     window.addEventListener('resize', resize);
 
     const start = (e) => {
-        drawing = true; 
-        wasUsed = true;
-        ctx.beginPath();
-        const {left, top} = c.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - left;
-        const y = (e.clientY || e.touches[0].clientY) - top;
-        ctx.moveTo(x, y); 
-        e.preventDefault();
+        // Verificar que el toque/click esté DENTRO del canvas
+        const rect = c.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        
+        // Solo comenzar a dibujar si está dentro del área válida
+        if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+            drawing = true; 
+            wasUsed = true;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            e.preventDefault();
+            e.stopPropagation(); // Evitar que otros elementos capturen el evento
+        }
     };
     
     const move = (e) => {
         if(!drawing) return;
-        const {left, top} = c.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - left;
-        const y = (e.clientY || e.touches[0].clientY) - top;
+        
+        const rect = c.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        
         ctx.lineWidth = 2; 
         ctx.lineCap = "round"; 
         ctx.strokeStyle = "#000";
         ctx.lineTo(x, y); 
         ctx.stroke(); 
         e.preventDefault();
+        e.stopPropagation();
     };
     
-    const end = () => { drawing = false; };
+    const end = (e) => { 
+        if (drawing) {
+            drawing = false;
+            e.preventDefault();
+        }
+    };
 
+    // Eventos de mouse
     c.addEventListener("mousedown", start); 
-    c.addEventListener("touchstart", start, {passive:false});
     c.addEventListener("mousemove", move); 
-    c.addEventListener("touchmove", move, {passive:false});
-    c.addEventListener("mouseup", end); 
-    c.addEventListener("touchend", end);
+    c.addEventListener("mouseup", end);
     c.addEventListener("mouseout", end);
+    
+    // Eventos táctiles - con passive:false solo para los que necesitan preventDefault
+    c.addEventListener("touchstart", start, {passive:false});
+    c.addEventListener("touchmove", move, {passive:false});
+    c.addEventListener("touchend", end, {passive:false});
+    c.addEventListener("touchcancel", end, {passive:false});
     
     return {
         c, 
