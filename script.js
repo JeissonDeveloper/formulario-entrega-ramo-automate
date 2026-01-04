@@ -418,22 +418,51 @@ function animarCampoCompletado(id, valor) {
 }
 
 // ============================================================================
-// FIRMAS - CORREGIDO PARA EVITAR BORRADO AL HACER SCROLL
+// FIRMAS - CORREGIDO: Evita scroll Y apertura de teclado
 // ============================================================================
 function setupCanvas(id) {
     const c = document.getElementById(id);
     const ctx = c.getContext("2d");
     let drawing = false;
     let wasUsed = false;
+    let imageData = null; // Guardar firma antes de resize
     
-    const resize = () => { 
+    const resize = () => {
+        // Guardar la firma antes de redimensionar
+        if (wasUsed && c.width > 0 && c.height > 0) {
+            try {
+                imageData = ctx.getImageData(0, 0, c.width, c.height);
+            } catch(e) {
+                console.log("No se pudo guardar firma antes de resize");
+            }
+        }
+        
         c.width = c.offsetWidth; 
-        c.height = 140; 
+        c.height = 140;
+        
+        // Restaurar la firma después de redimensionar
+        if (imageData) {
+            try {
+                ctx.putImageData(imageData, 0, 0);
+            } catch(e) {
+                console.log("No se pudo restaurar firma después de resize");
+            }
+        }
     };
+    
     resize();
-    window.addEventListener('resize', resize);
+    
+    // Desactivar resize automático que borra la firma
+    // window.addEventListener('resize', resize);
 
     const start = (e) => {
+        // IMPORTANTE: Evitar que se abra el teclado
+        if (e.target === c) {
+            e.target.style.userSelect = 'none';
+            e.target.style.webkitUserSelect = 'none';
+            e.target.style.webkitTouchCallout = 'none';
+        }
+        
         const rect = c.getBoundingClientRect();
         const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
         const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top;
@@ -454,7 +483,7 @@ function setupCanvas(id) {
     };
     
     const move = (e) => {
-        if(!drawing) return; // NO dibujar si no estamos en modo drawing
+        if(!drawing) return;
         
         const rect = c.getBoundingClientRect();
         const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
@@ -470,7 +499,7 @@ function setupCanvas(id) {
     };
     
     const end = (e) => { 
-        if (drawing) { // SOLO finalizar si estábamos dibujando
+        if (drawing) {
             drawing = false;
             c.classList.remove('canvas-firmando');
             mostrarMensajeFirma(c.parentElement, false);
@@ -486,11 +515,16 @@ function setupCanvas(id) {
     c.addEventListener("mouseup", end);
     c.addEventListener("mouseout", end);
     
-    // Eventos táctiles - IMPORTANTE: passive:false solo en los necesarios
+    // Eventos táctiles
     c.addEventListener("touchstart", start, {passive:false});
     c.addEventListener("touchmove", move, {passive:false});
     c.addEventListener("touchend", end, {passive:false});
     c.addEventListener("touchcancel", end, {passive:false});
+    
+    // Prevenir gestos que puedan abrir teclado
+    c.addEventListener("gesturestart", (e) => e.preventDefault());
+    c.addEventListener("gesturechange", (e) => e.preventDefault());
+    c.addEventListener("gestureend", (e) => e.preventDefault());
     
     return {
         c, 
@@ -498,7 +532,8 @@ function setupCanvas(id) {
         isSigned: () => wasUsed, 
         reset: () => { 
             wasUsed = false; 
-            drawing = false; // IMPORTANTE: resetear también el estado de drawing
+            drawing = false;
+            imageData = null;
             quitarCheckFirma(c.parentElement); 
         }
     };
