@@ -418,7 +418,7 @@ function animarCampoCompletado(id, valor) {
 }
 
 // ============================================================================
-// FIRMAS
+// FIRMAS - CORREGIDO PARA EVITAR BORRADO AL HACER SCROLL
 // ============================================================================
 function setupCanvas(id) {
     const c = document.getElementById(id);
@@ -435,9 +435,10 @@ function setupCanvas(id) {
 
     const start = (e) => {
         const rect = c.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
+        const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top;
         
+        // SOLO activar si el toque está DENTRO del canvas
         if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
             drawing = true; 
             wasUsed = true;
@@ -453,11 +454,11 @@ function setupCanvas(id) {
     };
     
     const move = (e) => {
-        if(!drawing) return;
+        if(!drawing) return; // NO dibujar si no estamos en modo drawing
         
         const rect = c.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
+        const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top;
         
         ctx.lineWidth = 2; 
         ctx.lineCap = "round"; 
@@ -469,7 +470,7 @@ function setupCanvas(id) {
     };
     
     const end = (e) => { 
-        if (drawing) {
+        if (drawing) { // SOLO finalizar si estábamos dibujando
             drawing = false;
             c.classList.remove('canvas-firmando');
             mostrarMensajeFirma(c.parentElement, false);
@@ -479,11 +480,13 @@ function setupCanvas(id) {
         }
     };
 
+    // Eventos de mouse
     c.addEventListener("mousedown", start); 
     c.addEventListener("mousemove", move); 
     c.addEventListener("mouseup", end);
     c.addEventListener("mouseout", end);
     
+    // Eventos táctiles - IMPORTANTE: passive:false solo en los necesarios
     c.addEventListener("touchstart", start, {passive:false});
     c.addEventListener("touchmove", move, {passive:false});
     c.addEventListener("touchend", end, {passive:false});
@@ -493,7 +496,11 @@ function setupCanvas(id) {
         c, 
         ctx, 
         isSigned: () => wasUsed, 
-        reset: () => { wasUsed = false; quitarCheckFirma(c.parentElement); }
+        reset: () => { 
+            wasUsed = false; 
+            drawing = false; // IMPORTANTE: resetear también el estado de drawing
+            quitarCheckFirma(c.parentElement); 
+        }
     };
 }
 
