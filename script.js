@@ -311,7 +311,7 @@ window.toggleAccesorio = (item) => {
     if (valor === "No") {
         if (selectEstado) {
             selectEstado.disabled = true;
-            selectEstado.value = "N/A";
+            selectEstado.value = "Bueno"; // Cambiado de N/A a Bueno
             selectEstado.classList.add("bloqueado");
         }
         if (inputObs) {
@@ -638,8 +638,8 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
     
     const valSelect = (name) => {
         const el = document.querySelector(`select[name="${name}"]`);
-        if (el.disabled) return "N/A";
-        return el.value || "N/A";
+        if (el.disabled) return "Bueno"; // Cambiado de N/A a Bueno
+        return el.value || "Bueno";
     };
     
     const valInput = (id) => {
